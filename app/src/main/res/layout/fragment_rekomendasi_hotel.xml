@@ -1,0 +1,54 @@
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragment.RekomendasiHotelFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="343dp"
+            android:layout_height="343dp"
+            android:src="@drawable/ic_circle_gradient"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="-172dp"
+            android:layout_marginTop="-36dp"/>
+
+        <ImageView
+            android:id="@+id/img_lets"
+            android:layout_width="241.79dp"
+            android:layout_height="203.61dp"
+            android:src="@drawable/ai_hotel"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="58.4dp"
+            android:layout_marginRight="-24dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose where\nyou stay"
+            android:textColor="@color/colorBlackLa"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="6dp"
+            android:fontFamily="@font/comfortaa"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="67dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rc_hotel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/img_lets"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="29.7dp"/>
+
+    </RelativeLayout>
+
+</ScrollView>

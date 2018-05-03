@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="11dp"
+                        android:layout_height="11dp"
+                        android:src="@drawable/ic_ai_travel"
+                        android:tint="@color/colorBlackLc"
+                        android:layout_marginRight="12dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Selasa, 10 April 2018"
+                        android:textSize="10sp"
+                        android:textColor="@color/colorBlackLc"
+                        android:maxLines="2"
+                        android:fontFamily="@font/segoe"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="My Travelling 1"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorBlackLa"
+                    android:maxLines="1"
+                    android:fontFamily="@font/comfortaa"/>
+
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_marginBottom="16dp"
+                android:clipToPadding="false">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/card_travel"
+                        android:layout_width="234dp"
+                        android:layout_height="194dp"
+                        android:layout_marginRight="6dp"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginBottom="8dp"
+                        app:cardCornerRadius="4dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/img_travel"
+                                android:layout_width="match_parent"
+                                android:layout_height="119dp"
+                                android:src="@drawable/ic_launcher_background"
+                                android:scaleType="centerCrop"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:paddingRight="14dp"
+                                android:paddingLeft="14dp"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp">
+
+                                <TextView
+                                    android:id="@+id/tv_title_travel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pantai Sanggar"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/colorBlackLa"
+                                    android:maxLines="1"
+                                    android:fontFamily="@font/segoe"/>
+
+                                <TextView
+                                    android:id="@+id/tv_address_travel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Desa Karangasem, Kecamatan Kalidawir, Kabupaten Tulungagung"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/colorBlackLc"
+                                    android:maxLines="2"
+                                    android:fontFamily="@font/segoe"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/card_hotel"
+                        android:layout_width="234dp"
+                        android:layout_height="194dp"
+                        android:layout_marginRight="6dp"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginBottom="8dp"
+                        app:cardCornerRadius="4dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/img_hotel"
+                                android:layout_width="match_parent"
+                                android:layout_height="119dp"
+                                android:src="@drawable/ic_launcher_background"
+                                android:scaleType="centerCrop"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:paddingRight="14dp"
+                                android:paddingLeft="14dp"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp">
+
+                                <TextView
+                                    android:id="@+id/tv_title_hotel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pantai Sanggar"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/colorBlackLa"
+                                    android:maxLines="1"
+                                    android:fontFamily="@font/segoe"/>
+
+                                <TextView
+                                    android:id="@+id/tv_address_hotel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Desa Karangasem, Kecamatan Kalidawir, Kabupaten Tulungagung"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/colorBlackLc"
+                                    android:maxLines="2"
+                                    android:fontFamily="@font/segoe"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/card_restaurant"
+                        android:layout_width="234dp"
+                        android:layout_height="194dp"
+                        android:layout_marginRight="6dp"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginBottom="8dp"
+                        app:cardCornerRadius="4dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/img_restaurant"
+                                android:layout_width="match_parent"
+                                android:layout_height="119dp"
+                                android:src="@drawable/ic_launcher_background"
+                                android:scaleType="centerCrop"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:paddingRight="14dp"
+                                android:paddingLeft="14dp"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp">
+
+                                <TextView
+                                    android:id="@+id/tv_title_restaurant"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pantai Sanggar"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/colorBlackLa"
+                                    android:maxLines="1"
+                                    android:fontFamily="@font/segoe"/>
+
+                                <TextView
+                                    android:id="@+id/tv_address_restaurant"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Desa Karangasem, Kecamatan Kalidawir, Kabupaten Tulungagung"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/colorBlackLc"
+                                    android:maxLines="2"
+                                    android:fontFamily="@font/segoe"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

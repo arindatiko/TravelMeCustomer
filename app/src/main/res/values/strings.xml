@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">TravelMe</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="daftar">Belum punya akun? <u>Daftar Sekarang.</u></string>
+    <string name="login">Sudah punya akun? <u>Masuk Sekarang.</u></string>
+    <string name="title_activity_map">Map</string>
+</resources>

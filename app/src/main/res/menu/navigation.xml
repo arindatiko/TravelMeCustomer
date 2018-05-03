@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_ai_home"
+        android:title="Home"/>
+
+    <item
+        android:id="@+id/nav_lets"
+        android:icon="@drawable/ic_ai_lets"
+        android:title="Let's Travel"/>
+
+    <item
+        android:id="@+id/nav_travel"
+        android:icon="@drawable/ic_ai_travel"
+        android:title="My Travel"/>
+</menu>
