@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +39,15 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
     private Context context;
     private List<Kamar> hotels;
     private MyChoice myChoice;
+    private TextView tvMyBudget;
+    private ProgressBar pbBudget;
 
-    public RekomendasiHotelAdapter(Context context, List<Kamar> hotels, MyChoice myChoice) {
+    public RekomendasiHotelAdapter(Context context, List<Kamar> hotels, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
         this.hotels = hotels;
         this.myChoice = myChoice;
+        this.tvMyBudget = tvMyBudget;
+        this.pbBudget = pbBudget;
     }
 
     @Override
@@ -54,11 +59,11 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Kamar kamar = hotels.get(position);
-        final Double totalHarga = kamar.getHarga() * myChoice.getJumKamar();
+        final Double totalHarga = kamar.getHarga() * myChoice.getJumKamar() * myChoice.getJumDay();
 
         holder.tvTitle.setText(kamar.getNama());
         holder.tvPrice.setText("Rp "+totalHarga);
-        holder.tvDetailPrice.setText("Jumlah kamar : "+ myChoice.getJumKamar() +"\nHarga kamar : "+ kamar.getHarga());
+        holder.tvDetailPrice.setText("Jumlah kamar : "+ myChoice.getJumKamar() +"\nJumlah hari : "+ myChoice.getJumDay() +"\nHarga kamar : "+ kamar.getHarga());
         holder.tvTime.setVisibility(View.GONE);
 
        /* holder.cardItem.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +106,9 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
                         editor.commit();
                     }
                 }
+
+                pbBudget.setProgress(myChoice.getBudget().intValue());
+                tvMyBudget.setText("Rp "+ myChoice.getBudget());
 
                 Log.d("selectedKamar",sharedPreferences.getString("id_kamar",""));
                 Log.d("budget", String.valueOf(myChoice.getBudget()));

@@ -1,6 +1,7 @@
 package arindatiko.example.com.travelmecustomer.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +66,40 @@ public class RekomendasiRestoFragment extends Fragment {
 
     public void loadMenuData() {
         final MyChoice myChoice = ((RekomendasiActivity) getActivity()).getMyChoice();
+        final TextView tvMyBudget = ((RekomendasiActivity) getActivity()).getTvMyBudget();
+        final ProgressBar pbBudget = ((RekomendasiActivity) getActivity()).getPbBudget();
+
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.show();
+
+        API.service_post.get_r_menu(
+                "menu",
+                myChoice.getJumPorsi(),
+                myChoice.getBudget()
+        ).enqueue(new Callback<ArrayList<Menu>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Menu>> call, Response<ArrayList<Menu>> response) {
+                menus = response.body();
+
+                rcRestaurant.setAdapter(new RekomendasiRestoAdapter(getContext(), menus, myChoice, tvMyBudget, pbBudget));
+                rcRestaurant.getAdapter().notifyDataSetChanged();
+
+                progressDialog.dismiss();
+            }
+
+            @SuppressLint("LongLogTag")
+            @Override
+            public void onFailure(Call<ArrayList<Menu>> call, Throwable t) {
+                Log.d(RERESTO_FRAG_TAG, t.getMessage());
+            }
+        });
+    }
+    /*public void loadMenuData() {
+        final MyChoice myChoice = ((RekomendasiActivity) getActivity()).getMyChoice();
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.show();
 
         API.service_post.get_r_menu(
                 "menu",
@@ -75,6 +112,8 @@ public class RekomendasiRestoFragment extends Fragment {
 
                 rcRestaurant.setAdapter(new RekomendasiRestoAdapter(getContext(), menus, myChoice));
                 rcRestaurant.getAdapter().notifyDataSetChanged();
+
+                progressDialog.dismiss();
             }
 
             @SuppressLint("LongLogTag")
@@ -83,7 +122,7 @@ public class RekomendasiRestoFragment extends Fragment {
                 Log.d(RERESTO_FRAG_TAG, t.getMessage());
             }
         });
-    }
+    }*/
 
 }
 

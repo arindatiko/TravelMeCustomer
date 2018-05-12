@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,11 +37,15 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
     private Context context;
     private List<Wisata> travels;
     private MyChoice myChoice;
+    private TextView tvMyBudget;
+    private ProgressBar pbBudget;
 
-    public RekomendasiTravelAdapter(Context context, List<Wisata> travels, MyChoice myChoice) {
+    public RekomendasiTravelAdapter(Context context, List<Wisata> travels, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
         this.travels = travels;
         this.myChoice = myChoice;
+        this.tvMyBudget = tvMyBudget;
+        this.pbBudget = pbBudget;
 
         SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -111,7 +116,7 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
             @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel", Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
 
                 if(sharedPreferences.getString("id_wisata","").contains(","+String.valueOf(wisata.getId_wisata()))){
@@ -138,6 +143,9 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
                         editor.commit();
                     }
                 }
+
+                pbBudget.setProgress(myChoice.getBudget().intValue());
+                tvMyBudget.setText("Rp "+ myChoice.getBudget());
 
                 Log.d("selectedTravel",sharedPreferences.getString("id_wisata",""));
                 Log.d("budget", String.valueOf(myChoice.getBudget()));

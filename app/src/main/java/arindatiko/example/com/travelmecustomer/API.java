@@ -6,19 +6,23 @@ import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.Kuliner;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.Penginapan;
+import arindatiko.example.com.travelmecustomer.model.Rekomendasi;
 import arindatiko.example.com.travelmecustomer.model.ResponseApi;
 import arindatiko.example.com.travelmecustomer.model.User;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
+import arindatiko.example.com.travelmecustomer.util.GMapsDirectionsResponse;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public class API {
     //public static String BASE_URL = "http://muhibush.xyz/api_trme/index.php/Api/";
-//    public static String BASE_URL = "http://192.168.100.3/travel_me/index.php/Api/";
+    //public static String BASE_URL = "http://192.168.100.3/travel_me/index.php/Api/";
     public static String BASE_URL = "http://192.168.43.47/travel_me/index.php/Api/";
 
 
@@ -88,6 +92,18 @@ public class API {
 
         @FormUrlEncoded
         @POST("recomendation")
+        Call<Double> get_r_jarak(
+                @Field("jenis_layanan") String jenis_layanan,
+                @Field("jasa") Double jasa,
+                @Field("tambahan") Double tambahan,
+                @Field("total_km") Double total_km,
+                @Field("jumlah_motor") int jumlah_motor,
+                @Field("jumlah_mobil") int jumlah_mobil,
+                @Field("jumlah_bus") int jumlah_bus
+        );
+
+        @FormUrlEncoded
+        @POST("recomendation")
         Call<ArrayList<Kamar>> get_r_kamar(
                 @Field("jenis_layanan") String jenis_layanan,
                 @Field("kamar_jumlah") int kamar_jumlah,
@@ -130,10 +146,21 @@ public class API {
         @FormUrlEncoded
         @POST("detail_kamar")
         Call<Kamar> get_detail_kamar(@Field("id_kamar") int id_kamar);
+
+        @FormUrlEncoded
+        @POST("cek_lokasi")
+        Call<User> cek_lokasi(@Field("id_user") int id_user,
+                              @Field("posisi_lat") String posisi_lat,
+                              @Field("posisi_lng") String posisi_lng,
+                              @Field("user_type") String user_type);
     }
 
     public interface GetService {
-
+        @FormUrlEncoded
+        @GET("directions/json?origin=Surabaya&destination=Tulungagung&key=AIzaSyBl2cV8z5qJeyTKLPG8JlXfk8rfnzPJ2QI")
+        Call<GMapsDirectionsResponse> getDirections(@Query("origin") String origin,
+                                                    @Query("waypoint") String waypoint,
+                                                    @Query("destination") String destination);
     }
 
     public interface DeleteService {

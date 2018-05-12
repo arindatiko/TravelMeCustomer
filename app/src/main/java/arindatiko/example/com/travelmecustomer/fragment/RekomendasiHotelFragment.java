@@ -1,6 +1,7 @@
 package arindatiko.example.com.travelmecustomer.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +65,11 @@ public class RekomendasiHotelFragment extends Fragment {
         RekomendasiActivity.currentFragment = RekomendasiActivity.TRAVEL;
     }
 
-    public void loadHotelData() {
+    /*public void loadHotelData() {
         final MyChoice myChoice = ((RekomendasiActivity) getActivity()).getMyChoice();
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.show();
 
         API.service_post.get_r_kamar(
                 "kamar",
@@ -77,6 +83,41 @@ public class RekomendasiHotelFragment extends Fragment {
 
                 rcHotel.setAdapter(new RekomendasiHotelAdapter(getContext(), hotels, myChoice));
                 rcHotel.getAdapter().notifyDataSetChanged();
+
+                progressDialog.dismiss();
+            }
+
+            @SuppressLint("LongLogTag")
+            @Override
+            public void onFailure(Call<ArrayList<Kamar>> call, Throwable t) {
+                Log.d(REHOTEL_FRAG_TAG, t.getMessage());
+            }
+        });
+    }*/
+
+    public void loadHotelData() {
+        final MyChoice myChoice = ((RekomendasiActivity) getActivity()).getMyChoice();
+        final TextView tvMyBudget = ((RekomendasiActivity) getActivity()).getTvMyBudget();
+        final ProgressBar pbBudget = ((RekomendasiActivity) getActivity()).getPbBudget();
+
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.show();
+
+        API.service_post.get_r_kamar(
+                "kamar",
+                myChoice.getJumKamar(),
+                myChoice.getJumDay(),
+                myChoice.getBudget()
+        ).enqueue(new Callback<ArrayList<Kamar>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Kamar>> call, Response<ArrayList<Kamar>> response) {
+                hotels = response.body();
+
+                rcHotel.setAdapter(new RekomendasiHotelAdapter(getContext(), hotels, myChoice, tvMyBudget, pbBudget));
+                rcHotel.getAdapter().notifyDataSetChanged();
+
+                progressDialog.dismiss();
             }
 
             @SuppressLint("LongLogTag")

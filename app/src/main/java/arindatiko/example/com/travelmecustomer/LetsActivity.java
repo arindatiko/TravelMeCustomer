@@ -94,6 +94,7 @@ public class LetsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (ticketMotor > 0) ticketMotor--;
                 tvMotor.setText(String.valueOf(ticketMotor));
+                getIntent().putExtra("jumlah_motor", ticketMotor);
             }
         });
 
@@ -231,7 +232,7 @@ public class LetsActivity extends AppCompatActivity {
                     tvCatAlam.setTextColor(Color.parseColor("#656565"));
                     imgCatAlam.setImageTintList(ColorStateList.valueOf(Color.parseColor("#656565")));
                 }
-                Toast.makeText(LetsActivity.this, categoryWisata.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(LetsActivity.this, categoryWisata.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 

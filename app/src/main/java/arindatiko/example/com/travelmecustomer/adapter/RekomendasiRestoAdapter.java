@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,11 +40,15 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
     private Context context;
     private List<Menu> menus;
     private MyChoice myChoice;
+    private TextView tvMyBudget;
+    private ProgressBar pbBudget;
 
-    public RekomendasiRestoAdapter(Context context, List<Menu> menus, MyChoice myChoice) {
+    public RekomendasiRestoAdapter(Context context, List<Menu> menus, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
         this.menus = menus;
         this.myChoice = myChoice;
+        this.tvMyBudget = tvMyBudget;
+        this.pbBudget = pbBudget;
     }
 
     @Override
@@ -78,7 +83,7 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
             @Override
             public void onClick(View view) {
 
-                SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel", Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
 
 
@@ -107,6 +112,10 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                 }
                 editor.putString("sisabudget", String.valueOf(myChoice.getBudget()));
                 editor.commit();
+
+                pbBudget.setProgress(myChoice.getBudget().intValue());
+                tvMyBudget.setText("Rp "+ myChoice.getBudget());
+
                 Log.d("selectedMenu",sharedPreferences.getString("id_menu",""));
                 Log.d("budget", String.valueOf(myChoice.getBudget()));
 

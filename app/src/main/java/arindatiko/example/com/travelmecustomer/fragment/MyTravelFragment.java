@@ -3,6 +3,7 @@ package arindatiko.example.com.travelmecustomer.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -36,7 +37,7 @@ public class MyTravelFragment extends Fragment {
     private List<Menu> menus = new ArrayList<>();
 
     public MyTravelFragment() {
-        // Required empty public constructor
+        // Required empty public constructor.
     }
 
     @Override
@@ -50,23 +51,27 @@ public class MyTravelFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_travel, container, false);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = null;
+        sharedPreferences = getContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         rcTravel = (RecyclerView) view.findViewById(R.id.rc_travel);
-        RecyclerView.LayoutManager travelLayout = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager travelLayout = null;
+        travelLayout = new LinearLayoutManager(getContext());
         rcTravel.setLayoutManager(travelLayout);
         rcTravel.setItemAnimator(new DefaultItemAnimator());
         rcTravel.setFocusable(false);
 
         rcHotel = (RecyclerView) view.findViewById(R.id.rc_hotel);
-        RecyclerView.LayoutManager travelLayout1 = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager travelLayout1 = null;
+        travelLayout1 = new LinearLayoutManager(getContext());
         rcHotel.setLayoutManager(travelLayout1);
         rcHotel.setItemAnimator(new DefaultItemAnimator());
         rcHotel.setFocusable(false);
 
         rcRestaurant = (RecyclerView) view.findViewById(R.id.rc_restaurant);
-        RecyclerView.LayoutManager travelLayout2 = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager travelLayout2 = null;
+        travelLayout2 = new LinearLayoutManager(getContext());
         rcRestaurant.setLayoutManager(travelLayout2);
         rcRestaurant.setItemAnimator(new DefaultItemAnimator());
         rcRestaurant.setFocusable(false);
@@ -86,7 +91,6 @@ public class MyTravelFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Wisata>> call, Response<ArrayList<Wisata>> response) {
                 travels = response.body();
-
                 rcTravel.setAdapter(new MyTravelWisataAdapter(getContext(), travels));
                 rcTravel.getAdapter().notifyDataSetChanged();
 
@@ -104,7 +108,6 @@ public class MyTravelFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Kamar>> call, Response<ArrayList<Kamar>> response) {
                 hotels = response.body();
-
                 rcHotel.setAdapter(new MyTravelKamarAdapter(getContext(), hotels));
                 rcHotel.getAdapter().notifyDataSetChanged();
             }
@@ -119,7 +122,6 @@ public class MyTravelFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Menu>> call, Response<ArrayList<Menu>> response) {
                 menus = response.body();
-
                 rcRestaurant.setAdapter(new MyTravelMenuAdapter(getContext(), menus));
                 rcRestaurant.getAdapter().notifyDataSetChanged();
             }

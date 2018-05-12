@@ -1,8 +1,10 @@
 package arindatiko.example.com.travelmecustomer.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -38,6 +40,7 @@ public class HomeFragment extends Fragment {
     private List<Wisata> travels = new ArrayList<>();
     private List<Kuliner> restaurants = new ArrayList<>();
     private List<Penginapan> hotels = new ArrayList<>();
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -59,20 +62,28 @@ public class HomeFragment extends Fragment {
         rcRestaurant = (RecyclerView) view.findViewById(R.id.rc_restaurant);
         rcHotel = (RecyclerView) view.findViewById(R.id.rc_hotel);
 
-        @SuppressLint({"NewApi", "LocalSuppress"})
-        RecyclerView.LayoutManager travelLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rcTravel.setLayoutManager(travelLayout);
-        rcTravel.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView.LayoutManager travelLayout = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            travelLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            rcTravel.setLayoutManager(travelLayout);
+            rcTravel.setItemAnimator(new DefaultItemAnimator());
+        }
 
-        @SuppressLint({"NewApi", "LocalSuppress"})
-        RecyclerView.LayoutManager restaurantLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rcRestaurant.setLayoutManager(restaurantLayout);
-        rcRestaurant.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView.LayoutManager restaurantLayout = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            restaurantLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            rcRestaurant.setLayoutManager(restaurantLayout);
+            rcRestaurant.setItemAnimator(new DefaultItemAnimator());
+        }
 
-        @SuppressLint({"NewApi", "LocalSuppress"})
-        RecyclerView.LayoutManager hotelLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rcHotel.setLayoutManager(hotelLayout);
-        rcHotel.setItemAnimator(new DefaultItemAnimator());
+
+        RecyclerView.LayoutManager hotelLayout = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            hotelLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            rcHotel.setLayoutManager(hotelLayout);
+            rcHotel.setItemAnimator(new DefaultItemAnimator());
+
+        }
 
         loadWisataData();
         loadKulinerData();
@@ -83,14 +94,20 @@ public class HomeFragment extends Fragment {
     }
 
     public void loadWisataData() {
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.show();
+
         API.service_post.get_all_wisata(0).enqueue(new Callback<ArrayList<Wisata>>() {
-            @SuppressLint("NewApi")
             @Override
             public void onResponse(Call<ArrayList<Wisata>> call, Response<ArrayList<Wisata>> response) {
                 travels = response.body();
 
-                rcTravel.setAdapter(new WisataAdapter(getContext(), travels));
-                rcTravel.getAdapter().notifyDataSetChanged();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    rcTravel.setAdapter(new WisataAdapter(getContext(), travels));
+                    rcTravel.getAdapter().notifyDataSetChanged();
+                }
+                progressDialog.dismiss();
             }
 
             @Override
@@ -101,14 +118,20 @@ public class HomeFragment extends Fragment {
     }
 
     public void loadKulinerData() {
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.show();
+
         API.service_post.get_all_kuliner(0).enqueue(new Callback<ArrayList<Kuliner>>() {
-            @SuppressLint("NewApi")
             @Override
             public void onResponse(Call<ArrayList<Kuliner>> call, Response<ArrayList<Kuliner>> response) {
                 restaurants = response.body();
 
-                rcRestaurant.setAdapter(new KulinerAdapter(getContext(), restaurants));
-                rcRestaurant.getAdapter().notifyDataSetChanged();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    rcRestaurant.setAdapter(new KulinerAdapter(getContext(), restaurants));
+                    rcRestaurant.getAdapter().notifyDataSetChanged();
+                }
+                progressDialog.dismiss();
             }
 
             @Override
@@ -119,14 +142,20 @@ public class HomeFragment extends Fragment {
     }
 
     public void loadPenginapanData() {
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.show();
+
         API.service_post.get_all_penginapan(0).enqueue(new Callback<ArrayList<Penginapan>>() {
-            @SuppressLint("NewApi")
             @Override
             public void onResponse(Call<ArrayList<Penginapan>> call, Response<ArrayList<Penginapan>> response) {
                 hotels = response.body();
 
-                rcHotel.setAdapter(new PenginapanAdapter(getContext(), hotels));
-                rcHotel.getAdapter().notifyDataSetChanged();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    rcHotel.setAdapter(new PenginapanAdapter(getContext(), hotels));
+                    rcHotel.getAdapter().notifyDataSetChanged();
+                }
+                progressDialog.dismiss();
             }
 
             @Override

@@ -8,6 +8,9 @@ public class Packages {
     private ArrayList<Kamar> kamar;
     private ArrayList<Menu> menu;
 
+    public Packages() {
+    }
+
     public Packages(ArrayList<Wisata> wisata, ArrayList<Kamar> kamar, ArrayList<Menu> menu) {
         this.wisata = wisata;
         this.kamar = kamar;

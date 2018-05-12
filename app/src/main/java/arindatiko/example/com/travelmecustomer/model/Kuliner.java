@@ -18,12 +18,14 @@ public class Kuliner {
     private String fasilitas;
     private String jam_buka;
     private String jam_tutup;
+    private String akses;
     private List<Menu> menu;
 
     public Kuliner() {
     }
 
-    public Kuliner(int id_kuliner, int id_admin, String nama, String alamat, String no_telp, Double posisi_lat, Double posisi_lng, Double harga_tiket_parkir_motor, Double harga_tiket_parkir_mobil, Double harga_tiket_parkir_bus, String foto, String deskripsi, String fasilitas, String jam_buka, String jam_tutup) {
+    public Kuliner(int id_kuliner, int id_admin, String nama, String alamat, String no_telp, Double posisi_lat, Double posisi_lng, Double harga_tiket_parkir_motor, Double harga_tiket_parkir_mobil,
+                   Double harga_tiket_parkir_bus, String foto, String deskripsi, String fasilitas, String jam_buka, String jam_tutup, String akses) {
         this.id_kuliner = id_kuliner;
         this.id_admin = id_admin;
         this.nama = nama;
@@ -39,6 +41,7 @@ public class Kuliner {
         this.fasilitas = fasilitas;
         this.jam_buka = jam_buka;
         this.jam_tutup = jam_tutup;
+        this.akses = akses;
     }
 
     public List<Menu> getMenu() {
@@ -163,5 +166,13 @@ public class Kuliner {
 
     public void setJam_tutup(String jam_tutup) {
         this.jam_tutup = jam_tutup;
+    }
+
+    public String getAkses() {
+        return akses;
+    }
+
+    public void setAkses(String akses) {
+        this.akses = akses;
     }
 }

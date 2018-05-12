@@ -13,12 +13,14 @@ public class Penginapan {
     private String foto;
     private String deskripsi;
     private String fasilitas;
+    private String akses;
     private List<Kamar> kamar;
 
     public Penginapan() {
     }
 
-    public Penginapan(int id_penginapan, int id_admin, String nama, String alamat, String no_telp, Double posisi_lat, Double posisi_lng, String foto, String deskripsi, String fasilitas) {
+    public Penginapan(int id_penginapan, int id_admin, String nama, String alamat, String no_telp, Double posisi_lat,
+                      Double posisi_lng, String foto, String deskripsi, String fasilitas, String akses) {
         this.id_penginapan = id_penginapan;
         this.id_admin = id_admin;
         this.nama = nama;
@@ -29,6 +31,7 @@ public class Penginapan {
         this.foto = foto;
         this.deskripsi = deskripsi;
         this.fasilitas = fasilitas;
+        this.akses = akses;
     }
 
     public List<Kamar> getKamar() {
@@ -113,5 +116,13 @@ public class Penginapan {
 
     public void setFasilitas(String fasilitas) {
         this.fasilitas = fasilitas;
+    }
+
+    public String getAkses() {
+        return akses;
+    }
+
+    public void setAkses(String akses) {
+        this.akses = akses;
     }
 }
