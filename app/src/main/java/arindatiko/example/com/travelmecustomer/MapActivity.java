@@ -408,7 +408,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                 //draw route
                 GoogleDirectionConfiguration.getInstance().setLogEnabled(true);
-                GoogleDirection.withServerKey("AIzaSyBl2cV8z5qJeyTKLPG8JlXfk8rfnzPJ2QI")
+                GoogleDirection.withServerKey("xxx")
                         .from(asal)
                         .and(waypoint)
                         .to(destination)
