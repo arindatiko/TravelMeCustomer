@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class MyChoice implements Parcelable {
-    private Double budget;
+    private Double budget, totalBiaya;
     private List<String> categoryWisata = new ArrayList<>();
     private int ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild, jumPorsi, jumKamar, jumDay;
 
@@ -29,6 +29,14 @@ public class MyChoice implements Parcelable {
         this.jumPorsi = jumPorsi;
         this.jumKamar = jumKamar;
         this.jumDay = jumDay;
+    }
+
+    public Double getTotalBiaya() {
+        return totalBiaya;
+    }
+
+    public void setTotalBiaya(Double totalBiaya) {
+        this.totalBiaya = totalBiaya;
     }
 
     public Double getBudget() {
@@ -83,6 +91,7 @@ public class MyChoice implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.budget);
+        dest.writeValue(this.totalBiaya);
         dest.writeStringList(this.categoryWisata);
         dest.writeInt(this.ticketMotor);
         dest.writeInt(this.ticketCar);
@@ -96,6 +105,7 @@ public class MyChoice implements Parcelable {
 
     protected MyChoice(Parcel in) {
         this.budget = (Double) in.readValue(Double.class.getClassLoader());
+        this.totalBiaya = (Double) in.readValue(Double.class.getClassLoader());
         this.categoryWisata = in.createStringArrayList();
         this.ticketMotor = in.readInt();
         this.ticketCar = in.readInt();

@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -292,6 +294,29 @@ public class LetsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        /*etBudget.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                try {
+                    budget = Double.parseDouble(etBudget.getText().toString());
+                } catch (Exception e){
+                    budget = 0.0;
+                }
+                String pattern = "###,###.###";
+                DecimalFormat decimalFormat = new DecimalFormat(pattern);
+
+                String format = decimalFormat.format(etBudget);
+                etBudget.setText("");
+            }
+        });*/
+
+        /*etBudget.setOnKeyListener(new View.OnKeyListener() {
+            @Override     
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                return false;
+            }
+        });*/
 
         rvTravelling.setOnClickListener(new View.OnClickListener() {
             @Override

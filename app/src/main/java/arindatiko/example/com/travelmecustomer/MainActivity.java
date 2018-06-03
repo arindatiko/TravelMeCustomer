@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -20,15 +21,22 @@ import arindatiko.example.com.travelmecustomer.fragment.AccountFragment;
 import arindatiko.example.com.travelmecustomer.fragment.HistoryFragment;
 import arindatiko.example.com.travelmecustomer.fragment.HomeFragment;
 import arindatiko.example.com.travelmecustomer.fragment.MyTravelFragment;
+import arindatiko.example.com.travelmecustomer.util.SessionManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
+    SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sessionManager = new SessionManager(this);
+        Toast.makeText(MainActivity.this, sessionManager.getId(), Toast.LENGTH_SHORT).show();
+
 
         AHBottomNavigation navigation = (AHBottomNavigation)findViewById(R.id.navigation_bottom);
 

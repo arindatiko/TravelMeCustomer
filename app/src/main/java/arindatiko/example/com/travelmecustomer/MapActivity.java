@@ -1,22 +1,21 @@
 package arindatiko.example.com.travelmecustomer;
 
 import android.Manifest;
-import android.app.Activity;
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +28,15 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
-import com.google.android.gms.common.api.GoogleApiClient;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,67 +45,64 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import arindatiko.example.com.travelmecustomer.adapter.OrderMapAdapter;
-import arindatiko.example.com.travelmecustomer.model.Jarak;
 import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
-import arindatiko.example.com.travelmecustomer.model.Rekomendasi;
+import arindatiko.example.com.travelmecustomer.model.Pesanan;
+import arindatiko.example.com.travelmecustomer.model.Tujuan;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
 import arindatiko.example.com.travelmecustomer.util.GPSTracker;
 import arindatiko.example.com.travelmecustomer.util.SessionManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.media.CamcorderProfile.get;
-import static arindatiko.example.com.travelmecustomer.LetsActivity.MYCHOICE;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback, DirectionCallback {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, DirectionCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener  {
 
     private ArrayList<LatLng> dataMarker = new ArrayList<>();
-
     private List<String> akses = new ArrayList<>();
     private List<Double> daftarJarak = new ArrayList<>();
     private List<LatLng> waypoint = new ArrayList<>();
-    private List<Wisata> travels = new ArrayList<>();
-    private List<Kamar> hotels = new ArrayList<>();
-    private List<Menu> menus = new ArrayList<>();
+    private ArrayList<Tujuan> tujuan = new ArrayList<>();
 
-    //public static MyChoice myChoice = new MyChoice();
-    //RekomendasiActivity rekomendasiActivity = new RekomendasiActivity();
+    private Pesanan pesanan;
 
     private GPSTracker gps;
-    private GoogleMap mMap;
-    private LatLng asal, destination;
+    private LatLng asal, destination, pickUpLocation;
     private double lat, lng;
-    private Double total_km, jasa, biaya_tambahan, rekomendasi, budgetBaru;
+    private String id_user;
+    private Double total_km, jasa, biaya_tambahan, rekomendasi;
+    private int radius = 1;
+    private boolean driverFound = false;
+    private String driverFoundId;
 
     SharedPreferences sharedPreferences = null;
     SessionManager sessionManager;
+    ProgressDialog progressDialog;
 
-    /*@BindView(R.id.rc_order)
-    RecyclerView rc_order;*/
+    private GoogleMap mMap;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    LocationRequest mLocationRequest;
+
     @BindView(R.id.btnOrder)
     Button btnOrder;
     @BindView(R.id.txtNominal)
     TextView txtNominal;
-    /*@BindView(R.id.pb_budget)
-    ProgressBar pbBudget;*//*
-    @BindView(R.id.tv_my_budget)
-    TextView tvMyBudget;
-    @BindView(R.id.tv_total_budget)
-    TextView tvTotalBudget;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,24 +114,101 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         sharedPreferences = getApplicationContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
         sessionManager = new SessionManager(this);
 
+        /*dataMarker.clear();
+        akses.clear();
+        waypoint.clear();
+        tujuan.clear();
+        daftarJarak.clear();*/
+
         //myChoice = getIntent().getParcelableExtra(MYCHOICE);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        btnOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MapActivity.this, "cek", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         RekomendasiActivity.currentFragment = RekomendasiActivity.RESTAURANT;
+    }
+
+    @OnClick(R.id.btnOrder)
+    public void toOrder(View view){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.show();
+
+        //Toast.makeText(MapActivity.this, ""+lat+""+lng, Toast.LENGTH_SHORT).show();
+
+        String userId = sessionManager.getId();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.setLocation(userId, new GeoLocation(lat, lng));
+        //geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
+        //pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        createMarker(lat, lng, "Pick Up Here");
+        //mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Pick Up Here"));
+
+        btnOrder.setText("Mencari Driver....");
+
+        API.service_post.take_pesanan_custoemr(userId,asal.latitude, asal.longitude).enqueue(new Callback<Pesanan>() {
+            @Override
+            public void onResponse(Call<Pesanan> call, Response<Pesanan> response) {
+                pesanan = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<Pesanan> call, Throwable t) {
+
+            }
+        });
+
+        getClosestDriver();
+    }
+
+    private void getClosestDriver(){
+        DatabaseReference driversLocation = FirebaseDatabase.getInstance().getReference().child("driversAvailable");
+
+        GeoFire geofire = new GeoFire(driversLocation);
+
+        GeoQuery geoQuery = geofire.queryAtLocation(new GeoLocation(asal.latitude, asal.longitude), radius);
+        geoQuery.removeAllListeners();
+
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                if(!driverFound){
+                    driverFound = true;
+                    driverFoundId = key;
+                }
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                if(!driverFound){
+                    radius++;
+                    getClosestDriver();
+                }
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
@@ -139,7 +219,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         String id_wisata = sharedPreferences.getString("id_wisata", "");
         String id_kamar = sharedPreferences.getString("id_kamar", "");
         String id_menu = sharedPreferences.getString("id_menu", "");
-        String id_rute = sharedPreferences.getString("id_rute", "");
+
+        //Log.d("idKamar", id_kamar);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -160,76 +241,157 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             //Toast.makeText(this, (String.valueOf(gps.getLatitude()) + ", " +String.valueOf(gps.getLongitude())), Toast.LENGTH_SHORT).show();
         }
         mMap.setMyLocationEnabled(true);
-        //currentLoc = loc.getLatitude() + "," + loc.getLongitude();
-        sessionManager.setLoc(String.valueOf(asal));
+        //sessionManager.setLoc(String.valueOf(asal));
+
+        buildGoogleApiClient();
+
+        Log.d("id", id_wisata);
+        Log.d("id", id_kamar);
+        Log.d("id", id_menu);
 
         waterFallGetApi(id_wisata, id_kamar, id_menu);
     }
 
-    private void waterFallGetApi(String idWisata, final String idKamar, final String idMenu){
-        API.service_post.package_recomendation_wisata(idWisata, "wisata").enqueue(new Callback<ArrayList<Wisata>>() {
+    protected synchronized void buildGoogleApiClient(){
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        /*if(getApplicationContext() != null){
+            mLastLocation = location;
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
+            //String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }*/
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        /*LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        //String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = sessionManager.getId();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
+
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId);*/
+    }
+
+    private void waterFallGetApi(final String idWisata, final String idKamar, final String idMenu){
+        API.service_post.send_pesanan(sessionManager.getId(),idWisata, "wisata").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
-            public void onResponse(Call<ArrayList<Wisata>> call, Response<ArrayList<Wisata>> response) {
-                travels = response.body();
-                for (int i =0 ; i<travels.size();i++){
-                    createMarker(travels.get(i).getPosisi_lat(), travels.get(i).getPosisi_lng(), travels.get(i).getNama());
-                    akses.add(travels.get(i).getAkses());
+            public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
+                tujuan = response.body();
+
+                for (int i = 0; i < tujuan.size(); i++){
+                    if(tujuan.get(i).getJenis_layanan().equals("wisata")) {
+                        createMarker(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng(),
+                                tujuan.get(i).getWisata().get(0).getNama());
+                        akses.add(tujuan.get(i).getWisata().get(0).getAkses());
+                    }
                 }
                 waterFallGetApiPhraseOne(response.body(), idKamar, idMenu);
-                Log.d("success",response.body().toString());
+                Log.d("wisata",response.body().toString());
+                Log.d("idWisata",idWisata);
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Wisata>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Tujuan>> call, Throwable t) {
                 Log.d("error",t.getMessage());
 
             }
         });
     }
 
-    private void waterFallGetApiPhraseOne(final ArrayList<Wisata> dataWisata, String idKamar, final String idMenu){
-        API.service_post.package_recomendation_kamar(idKamar, "kamar").enqueue(new Callback<ArrayList<Kamar>>() {
+    private void waterFallGetApiPhraseOne(final ArrayList<Tujuan> dataWisata, final String idKamar, final String idMenu){
+        API.service_post.send_pesanan(sessionManager.getId(), idKamar, "kamar").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
-            public void onResponse(Call<ArrayList<Kamar>> call, Response<ArrayList<Kamar>> response) {
-                hotels = response.body();
-                for (int i = 0; i < hotels.size(); i++) {
-                    createMarker(hotels.get(i).getPenginapan().getPosisi_lat(), hotels.get(i).getPenginapan().getPosisi_lng(), hotels.get(i).getPenginapan().getNama());
-                    akses.add(hotels.get(i).getPenginapan().getAkses());
+            public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
+                tujuan = response.body();
+
+                for (int i = 0; i < tujuan.size(); i++){
+                    if(tujuan.get(i).getJenis_layanan().equals("kamar")) {
+                        createMarker(tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(),tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lng(),
+                                tujuan.get(i).getKamar().get(0).getPenginapan().getNama());
+                        akses.add(tujuan.get(i).getKamar().get(0).getPenginapan().getAkses());
+                    }
+
                 }
+
                 waterFallGetApiPhraseTwo(dataWisata, response.body(), idMenu);
-                Log.d("success", response.body().toString());
             }
             @Override
-            public void onFailure(Call<ArrayList<Kamar>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Tujuan>> call, Throwable t) {
 
             }
         });
     }
 
-    private void waterFallGetApiPhraseTwo(final ArrayList<Wisata> dataWisata, final ArrayList<Kamar> dataKamar, String idMenu){
-        API.service_post.package_recomendation_menu(idMenu, "menu").enqueue(new Callback<ArrayList<Menu>>() {
+    private void waterFallGetApiPhraseTwo(final ArrayList<Tujuan> dataWisata, final ArrayList<Tujuan> dataKamar, final String idMenu){
+        //Log.d("id", idMenu);
+        API.service_post.send_pesanan(sessionManager.getId(), idMenu, "menu").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
-            public void onResponse(Call<ArrayList<Menu>> call, Response<ArrayList<Menu>> response) {
-                //create marker menu
-                menus = response.body();
-                for (int i = 0; i < menus.size(); i++) {
-                    createMarker(menus.get(i).getKuliner().getPosisi_lat(), menus.get(i).getKuliner().getPosisi_lng(), menus.get(i).getKuliner().getNama());
-                    akses.add(menus.get(i).getKuliner().getAkses());
+            public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
+                tujuan = response.body();
+
+                for (int i = 0; i < tujuan.size(); i++) {
+                    if(tujuan.get(i).getJenis_layanan().equals("menu")) {
+                        createMarker(tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lat(), tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lng(),
+                                tujuan.get(i).getMenu().get(0).getKuliner().getNama());
+                        akses.add(tujuan.get(i).getMenu().get(0).getKuliner().getAkses());
+
+                    }
                 }
+
+                Log.d("menu",response.body().toString());
+                Log.d("idMenu",idMenu);
+
 
                 //draw marker all
-                for(int i = 0 ; i< dataWisata.size();i++){
-                    dataMarker.add(new LatLng(dataWisata.get(i).getPosisi_lat(), dataWisata.get(i).getPosisi_lng()));
+                for (int i = 0; i < tujuan.size(); i++) {
+                    if(tujuan.get(i).getJenis_layanan().equals("wisata")){
+                        dataMarker.add(new LatLng(dataWisata.get(i).getWisata().get(0).getPosisi_lat(), dataWisata.get(i).getWisata().get(0).getPosisi_lng()));
+                    }else if(tujuan.get(i).getJenis_layanan().equals("kamar")){
+                        dataMarker.add(new LatLng(dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(), dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lng()));
+                    }else if(tujuan.get(i).getJenis_layanan().equals("menu")){
+                        dataMarker.add(new LatLng(response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lat(), response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
+                    }
                 }
-
-                for(int i = 0 ; i< dataKamar.size();i++){
-                    dataMarker.add(new LatLng(dataKamar.get(i).getPenginapan().getPosisi_lat(), dataKamar.get(i).getPenginapan().getPosisi_lng()));
-                }
-
-                for(int i = 0 ; i< response.body().size();i++){
-                    dataMarker.add(new LatLng(response.body().get(i).getKuliner().getPosisi_lat(), response.body().get(i).getKuliner().getPosisi_lng()));
-                }
-                Log.d("success", String.valueOf(dataMarker));
 
                 //hitung jarak
                 for(int i=0; i<dataMarker.size(); i++){
@@ -240,11 +402,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         destination = dataMarker.get(i);
                 }
                 Collections.sort(daftarJarak);
-                Log.d("success", String.valueOf(daftarJarak));
 
                 //ambil total jarak
                 total_km = Math.ceil(daftarJarak.get(daftarJarak.size()-1));
-                Log.d("totalKm", String.valueOf(Math.ceil(total_km)));
 
                 //draw route
                 GoogleDirectionConfiguration.getInstance().setLogEnabled(true);
@@ -262,13 +422,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     }else if(akses.get(i).equals("sedang")){
                         biaya_tambahan = 10000.0;
                     }
-                    //biaya_tambahan = + biaya_tambahan[i+1];
                 }
-                Log.d("success", String.valueOf(akses));
-                Log.d("success", String.valueOf(biaya_tambahan));
 
                 //kondisi budget
-
                 final MyChoice myChoice = getIntent().getExtras().getParcelable("myChoice");
                 //TextView tvMyBudget = getIntent().getExtras().getParcelable("budget");
                 //ProgressBar pbBudget = getIntent().getExtras().getParcelable("progressBar");
@@ -280,13 +436,24 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     @Override
                     public void onResponse(Call<Double> call, Response<Double> response) {
                         rekomendasi = response.body();
-                        myChoice.setBudget(myChoice.getBudget()-rekomendasi);
+                        //myChoice.setBudget(myChoice.getBudget() + rekomendasi);
 
                         if(rekomendasi>myChoice.getBudget())
                             Toast.makeText(MapActivity.this, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
                         else{
                             txtNominal.setText("Rp "+rekomendasi.toString());
+                            myChoice.setBudget(myChoice.getBudget() - rekomendasi); // sisa
                         }
+
+                        //tampung total
+                       /* myChoice.setTotalBiaya(myChoice.getTotalBiaya()+rekomendasi);
+                        Double total = myChoice.getTotalBiaya();
+                                Toast.makeText(MapActivity.this, total.toString(), Toast.LENGTH_SHORT).show();
+                        //myChoice.setBudget(myChoice.getBudget()-rekomendasi);
+                        Double sisa = myChoice.getBudget();
+                        Toast.makeText(MapActivity.this, sisa.toString(), Toast.LENGTH_SHORT).show();*/
+
+
                     }
 
                     @Override
@@ -294,15 +461,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                     }
                 });
+
                 //progress bar
                 //pbBudget.setProgress(myChoice.getBudget().intValue());
-                /*tvMyBudget.setText("Rp "+ myChoice.getBudget());
-                tvTotalBudget.setText("Rp "+myChoice.getBudget());*/
+                //tvMyBudget.setText("Rp "+ myChoice.getBudget());
+                //tvTotalBudget.setText("Rp "+myChoice.getBudget());
                 //Log.d("budget", String.valueOf(myChoice.getBudget()));
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Menu>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Tujuan>> call, Throwable t) {
 
             }
         });
@@ -364,5 +532,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         double dist = earthRadius * c;
         return dist;
     }
+
 }
 

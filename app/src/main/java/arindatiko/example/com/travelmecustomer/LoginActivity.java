@@ -96,13 +96,13 @@ public class LoginActivity extends AppCompatActivity {
 
             //String telp = sessionManager.
 
-            API.service_post.login(txtTelp.getText().toString(), txtPassword.getText().toString(), "customer").enqueue(new Callback<User>() {
+            API.service_post.login(txtTelp.getText().toString(), txtPassword.getText().toString()).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     User user = response.body();
 
                     if (user != null) {
-                        sessionManager.setUid(user.getId_user());
+                        sessionManager.setUid(user.getId_user().toString());
                         sessionManager.setLogin(true);
                         sessionManager.setUsername(user.getUsername());
                         sessionManager.setUsertype(user.getUser_type());
@@ -120,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
                     Toast.makeText(LoginActivity.this, "Error login! Check your phone number and password.", Toast.LENGTH_SHORT).show();
+                    Log.e("test", String.valueOf(t.fillInStackTrace()));
                     progressDialog.dismiss();
                 }
             });

@@ -1,15 +1,14 @@
 package arindatiko.example.com.travelmecustomer.model;
 
 public class User {
-    private int id_user;
-    private String nama_lengkap, alamat, email, no_telp, username, user_type;
+    private String id_user, nama_lengkap, alamat, email, no_telp, username, user_type;
     private Double posisi_lat, posisi_lng;
 
-    public int getId_user() {
+    public String getId_user() {
         return id_user;
     }
 
-    public void setId_user(int id_user) {
+    public void setId_user(String id_user) {
         this.id_user = id_user;
     }
 

@@ -35,8 +35,8 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void setUid(int uid){
-        editor.putInt(KEY_IS_UID, uid);
+    public void setUid(String uid){
+        editor.putString(KEY_IS_UID, uid);
         editor.commit();
     }
 
@@ -89,8 +89,8 @@ public class SessionManager {
         return pref.getString(KEY_IS_checkinID,null);
     }
 */
-    public int getId(){
-        return pref.getInt(KEY_IS_UID,0);
+    public String getId(){
+        return pref.getString(KEY_IS_UID,null);
     }
 
     public boolean isLogin(){

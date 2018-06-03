@@ -91,6 +91,9 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                     holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
                     myChoice.setBudget(myChoice.getBudget()+totalHarga);
 
+                    //tampung total
+                    //myChoice.setTotalBiaya(myChoice.getTotalBiaya()+totalHarga);
+
                     String add_menu = sharedPreferences.getString("id_menu","");
                     add_menu = add_menu.replace(","+String.valueOf(menu.getId_menu()),"");
                     editor.putString("id_menu", String.valueOf(add_menu));

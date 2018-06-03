@@ -2,7 +2,7 @@ package arindatiko.example.com.travelmecustomer.model;
 
 public class Wisata {
     private int  id_wisata;
-    private int id_admin;
+    private int id_user;
     private String nama;
     private String desa;
     private String kecamatan;
@@ -25,9 +25,9 @@ public class Wisata {
     public Wisata() {
     }
 
-    public Wisata(int id_wisata, int id_admin, String nama, String desa, String kecamatan, Double tiket_masuk_dewasa, Double tiket_masuk_anak, Double biaya_parkir_motor, Double biaya_parkir_mobil, Double biaya_parkir_bus, String foto, String deskripsi, String fasilitas, Double posisi_lat, Double posisi_lng, String akses, String zona, String jam_buka, String jam_tutup, String jenis) {
+    public Wisata(int id_wisata, int id_user, String nama, String desa, String kecamatan, Double tiket_masuk_dewasa, Double tiket_masuk_anak, Double biaya_parkir_motor, Double biaya_parkir_mobil, Double biaya_parkir_bus, String foto, String deskripsi, String fasilitas, Double posisi_lat, Double posisi_lng, String akses, String zona, String jam_buka, String jam_tutup, String jenis) {
         this.id_wisata = id_wisata;
-        this.id_admin = id_admin;
+        this.id_user = id_user;
         this.nama = nama;
         this.desa = desa;
         this.kecamatan = kecamatan;
@@ -56,12 +56,12 @@ public class Wisata {
         this.id_wisata = id_wisata;
     }
 
-    public int getId_admin() {
-        return id_admin;
+    public int getId_user() {
+        return id_user;
     }
 
-    public void setId_admin(int id_admin) {
-        this.id_admin = id_admin;
+    public void setId_user(int id_user) {
+        this.id_user = id_user;
     }
 
     public String getNama() {

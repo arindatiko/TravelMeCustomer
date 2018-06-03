@@ -6,24 +6,23 @@ import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.Kuliner;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.Penginapan;
-import arindatiko.example.com.travelmecustomer.model.Rekomendasi;
-import arindatiko.example.com.travelmecustomer.model.ResponseApi;
+import arindatiko.example.com.travelmecustomer.model.Pesanan;
+import arindatiko.example.com.travelmecustomer.model.Tujuan;
 import arindatiko.example.com.travelmecustomer.model.User;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
-import arindatiko.example.com.travelmecustomer.util.GMapsDirectionsResponse;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 public class API {
     //public static String BASE_URL = "http://muhibush.xyz/api_trme/index.php/Api/";
     //public static String BASE_URL = "http://192.168.100.3/travel_me/index.php/Api/";
-    public static String BASE_URL = "http://192.168.43.47/travel_me/index.php/Api/";
+    //public static String BASE_URL = "http://192.168.43.47/travel_me/index.php/Api/";
+    //public static String BASE_URL = "http://ichoarinda.000webhostapp.com/travel_me/index.php/Api/";
+    public static String BASE_URL = "http://arinda.jagopesan.com/travel_me/index.php/Api/";
 
 
     public static PostService service_post = new Retrofit.Builder()
@@ -44,8 +43,8 @@ public class API {
         @POST("login")
         Call<User> login(
                 @Field("no_telp") String no_telp,
-                @Field("password") String pass,
-                @Field("user_type") String user_type
+                @Field("password") String pass/*,
+                @Field("user_type") String user_type*/
         );
 
         @FormUrlEncoded
@@ -153,14 +152,27 @@ public class API {
                               @Field("posisi_lat") String posisi_lat,
                               @Field("posisi_lng") String posisi_lng,
                               @Field("user_type") String user_type);
+
+        @FormUrlEncoded
+        @POST("pesanan")
+        Call<ArrayList<Tujuan>> send_pesanan(
+                @Field("id_user") String id_user,
+                @Field("id_tujuan") String id_tujuan,
+                @Field("jenis_layanan") String jenis_layanan
+        );
+
+        @FormUrlEncoded
+        @POST("take_pesanan_customer")
+        Call<Pesanan> take_pesanan_custoemr(
+                @Field("id_customer") String id_customer,/*
+                @Field("id_driver") String id_driver,*/
+                @Field("posisi_lat") Double posisi_lat,
+                @Field("posisi_lng") Double posisi_lng
+        );
     }
 
     public interface GetService {
-        @FormUrlEncoded
-        @GET("directions/json?origin=Surabaya&destination=Tulungagung&key=AIzaSyBl2cV8z5qJeyTKLPG8JlXfk8rfnzPJ2QI")
-        Call<GMapsDirectionsResponse> getDirections(@Query("origin") String origin,
-                                                    @Query("waypoint") String waypoint,
-                                                    @Query("destination") String destination);
+
     }
 
     public interface DeleteService {

@@ -87,6 +87,9 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
                     holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
                     myChoice.setBudget(myChoice.getBudget()+totalHarga);
 
+                    //tampung total
+                    //myChoice.setTotalBiaya(myChoice.getTotalBiaya()+totalHarga);
+
                     String add_kamar = sharedPreferences.getString("id_kamar","");
                     add_kamar = add_kamar.replace(","+String.valueOf(kamar.getId_kamar()),"");
                     editor.putString("id_kamar", String.valueOf(add_kamar));

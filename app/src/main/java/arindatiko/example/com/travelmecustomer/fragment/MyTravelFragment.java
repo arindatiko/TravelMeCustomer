@@ -25,6 +25,7 @@ import arindatiko.example.com.travelmecustomer.adapter.MyTravelWisataAdapter;
 import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
+import arindatiko.example.com.travelmecustomer.util.SessionManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,6 +36,8 @@ public class MyTravelFragment extends Fragment {
     private List<Wisata> travels = new ArrayList<>();
     private List<Kamar> hotels = new ArrayList<>();
     private List<Menu> menus = new ArrayList<>();
+
+    SessionManager sessionManager;
 
     public MyTravelFragment() {
         // Required empty public constructor.
@@ -50,6 +53,8 @@ public class MyTravelFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_travel, container, false);
+
+        sessionManager = new SessionManager(getActivity());
 
         SharedPreferences sharedPreferences = null;
         sharedPreferences = getContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
