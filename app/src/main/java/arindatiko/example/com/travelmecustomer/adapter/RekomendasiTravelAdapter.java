@@ -125,7 +125,7 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
                     myChoice.setBudget(myChoice.getBudget()+totalHarga);
 
                     //tampung total
-                    //myChoice.setTotalBiaya(myChoice.getTotalBiaya()+totalHarga);
+                    //myChoice.setTotalBiaya(totalHarga);
 
                     String add_wisata = sharedPreferences.getString("id_wisata","");
                     add_wisata = add_wisata.replace(","+String.valueOf(wisata.getId_wisata()),"");

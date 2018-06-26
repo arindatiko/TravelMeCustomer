@@ -92,7 +92,7 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                     myChoice.setBudget(myChoice.getBudget()+totalHarga);
 
                     //tampung total
-                    //myChoice.setTotalBiaya(myChoice.getTotalBiaya()+totalHarga);
+                   // myChoice.setTotalBiaya(myChoice.getTotalBiaya()+totalHarga);
 
                     String add_menu = sharedPreferences.getString("id_menu","");
                     add_menu = add_menu.replace(","+String.valueOf(menu.getId_menu()),"");

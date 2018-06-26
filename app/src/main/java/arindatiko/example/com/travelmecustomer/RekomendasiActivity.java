@@ -66,7 +66,7 @@ public class RekomendasiActivity extends AppCompatActivity {
                         currentFragment = RESTAURANT;
                         break;
                     case RESTAURANT:
-                        Intent intent = new Intent(RekomendasiActivity.this, MapActivity.class);
+                        Intent intent = new Intent(RekomendasiActivity.this, MapActivity2.class);
                         intent.putExtra("myChoice", myChoice);
                         intent.putExtra("budget", String.valueOf(tvMyBudget));
                         intent.putExtra("progressBar", String.valueOf(pbBudget));

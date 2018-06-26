@@ -10,4 +10,5 @@
     <string name="daftar">Belum punya akun? <u>Daftar Sekarang.</u></string>
     <string name="login">Sudah punya akun? <u>Masuk Sekarang.</u></string>
     <string name="title_activity_map">Map</string>
+    <string name="title_activity_map2">Map</string>
 </resources>

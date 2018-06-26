@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +37,12 @@ public class MyTravelFragment extends Fragment {
     private List<Wisata> travels = new ArrayList<>();
     private List<Kamar> hotels = new ArrayList<>();
     private List<Menu> menus = new ArrayList<>();
-
-    SessionManager sessionManager;
+    private TextView tvMyBudget, tvTotalBudget;
 
     public MyTravelFragment() {
-        // Required empty public constructor.
+        // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,35 +50,35 @@ public class MyTravelFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_travel, container, false);
 
-        sessionManager = new SessionManager(getActivity());
-
-        SharedPreferences sharedPreferences = null;
-        sharedPreferences = getContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         rcTravel = (RecyclerView) view.findViewById(R.id.rc_travel);
-        RecyclerView.LayoutManager travelLayout = null;
-        travelLayout = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager travelLayout = new LinearLayoutManager(getContext());
         rcTravel.setLayoutManager(travelLayout);
         rcTravel.setItemAnimator(new DefaultItemAnimator());
         rcTravel.setFocusable(false);
 
         rcHotel = (RecyclerView) view.findViewById(R.id.rc_hotel);
-        RecyclerView.LayoutManager travelLayout1 = null;
-        travelLayout1 = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager travelLayout1 = new LinearLayoutManager(getContext());
         rcHotel.setLayoutManager(travelLayout1);
         rcHotel.setItemAnimator(new DefaultItemAnimator());
         rcHotel.setFocusable(false);
 
         rcRestaurant = (RecyclerView) view.findViewById(R.id.rc_restaurant);
-        RecyclerView.LayoutManager travelLayout2 = null;
-        travelLayout2 = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager travelLayout2 = new LinearLayoutManager(getContext());
         rcRestaurant.setLayoutManager(travelLayout2);
         rcRestaurant.setItemAnimator(new DefaultItemAnimator());
         rcRestaurant.setFocusable(false);
 
+        tvMyBudget = (TextView) view.findViewById(R.id.tv_my_budget);
+        tvMyBudget.setText("Rp "+ sharedPreferences.getString("sisabudget",""));
+
+        tvTotalBudget = (TextView) view.findViewById(R.id.tv_total_budget);
+        tvTotalBudget.setText("Rp "+ sharedPreferences.getString("totalbudget",""));
+
         String id_wisata = sharedPreferences.getString("id_wisata","");
-        String id_kamar =sharedPreferences.getString("id_kamar","");
+        String id_kamar = sharedPreferences.getString("id_kamar","");
         String id_menu = sharedPreferences.getString("id_menu","");
 
         Log.d("TravelFragment","true");
@@ -96,6 +92,7 @@ public class MyTravelFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Wisata>> call, Response<ArrayList<Wisata>> response) {
                 travels = response.body();
+
                 rcTravel.setAdapter(new MyTravelWisataAdapter(getContext(), travels));
                 rcTravel.getAdapter().notifyDataSetChanged();
 
@@ -113,6 +110,7 @@ public class MyTravelFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Kamar>> call, Response<ArrayList<Kamar>> response) {
                 hotels = response.body();
+
                 rcHotel.setAdapter(new MyTravelKamarAdapter(getContext(), hotels));
                 rcHotel.getAdapter().notifyDataSetChanged();
             }
@@ -127,6 +125,7 @@ public class MyTravelFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Menu>> call, Response<ArrayList<Menu>> response) {
                 menus = response.body();
+
                 rcRestaurant.setAdapter(new MyTravelMenuAdapter(getContext(), menus));
                 rcRestaurant.getAdapter().notifyDataSetChanged();
             }
@@ -139,5 +138,4 @@ public class MyTravelFragment extends Fragment {
 
         return view;
     }
-
 }

@@ -84,7 +84,10 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".MapActivity"
-            android:label="@string/title_activity_map"></activity>
+            android:label="@string/title_activity_map" />
+        <activity
+            android:name=".MapActivity2"
+            android:label="@string/title_activity_map2"></activity>
     </application>
 
 </manifest>

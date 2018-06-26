@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class MyChoice implements Parcelable {
-    private Double budget, totalBiaya;
+    private Double budget, totalBiaya, budget_awal;
     private List<String> categoryWisata = new ArrayList<>();
     private int ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild, jumPorsi, jumKamar, jumDay;
 
@@ -29,6 +29,14 @@ public class MyChoice implements Parcelable {
         this.jumPorsi = jumPorsi;
         this.jumKamar = jumKamar;
         this.jumDay = jumDay;
+    }
+
+    public Double getBudget_awal() {
+        return budget_awal;
+    }
+
+    public void setBudget_awal(Double budget_awal) {
+        this.budget_awal = budget_awal;
     }
 
     public Double getTotalBiaya() {

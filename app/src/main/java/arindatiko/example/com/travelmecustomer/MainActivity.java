@@ -1,7 +1,12 @@
 package arindatiko.example.com.travelmecustomer;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.app.Fragment;
 import android.support.design.widget.BottomNavigationView;
@@ -28,6 +33,9 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     SessionManager sessionManager;
+    AHBottomNavigation navigation;
+    LocationManager cek;
+    AlertDialog.Builder alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +44,28 @@ public class MainActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
         Toast.makeText(MainActivity.this, sessionManager.getId(), Toast.LENGTH_SHORT).show();
+        navigation = (AHBottomNavigation)findViewById(R.id.navigation_bottom);
 
-
-        AHBottomNavigation navigation = (AHBottomNavigation)findViewById(R.id.navigation_bottom);
+        cek = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(!cek.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            alert = new AlertDialog.Builder(this);
+            alert.setMessage("GPS tidak aktif. Aktifkan sekarang?")
+                    .setCancelable(false)
+                    .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .create();
+            alert.show();
+        }
 
         AHBottomNavigationItem item1 = new AHBottomNavigationItem("Home", R.drawable.ic_ai_home);
         AHBottomNavigationItem item2 = new AHBottomNavigationItem("My Travel",R.drawable.ic_ai_mytravel);

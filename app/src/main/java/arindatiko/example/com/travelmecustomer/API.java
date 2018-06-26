@@ -154,20 +154,21 @@ public class API {
                               @Field("user_type") String user_type);
 
         @FormUrlEncoded
-        @POST("pesanan")
-        Call<ArrayList<Tujuan>> send_pesanan(
-                @Field("id_user") String id_user,
+        @POST("rekomendasi")
+        Call<ArrayList<Tujuan>> add_objek(
+                @Field("id_user") int id_user,
                 @Field("id_tujuan") String id_tujuan,
                 @Field("jenis_layanan") String jenis_layanan
         );
 
         @FormUrlEncoded
-        @POST("take_pesanan_customer")
-        Call<Pesanan> take_pesanan_custoemr(
-                @Field("id_customer") String id_customer,/*
+        @POST("pesanan")
+        Call<Pesanan> send_pesanan(
+                @Field("id_customer") int id_customer,/*
                 @Field("id_driver") String id_driver,*/
                 @Field("posisi_lat") Double posisi_lat,
-                @Field("posisi_lng") Double posisi_lng
+                @Field("posisi_lng") Double posisi_lng,
+                @Field("total_budget") Double total_budget
         );
     }
 

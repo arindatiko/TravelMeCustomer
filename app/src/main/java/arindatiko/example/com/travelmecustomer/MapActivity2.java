@@ -54,12 +54,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import arindatiko.example.com.travelmecustomer.model.Kamar;
-import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 import arindatiko.example.com.travelmecustomer.model.Pesanan;
 import arindatiko.example.com.travelmecustomer.model.Tujuan;
-import arindatiko.example.com.travelmecustomer.model.Wisata;
 import arindatiko.example.com.travelmecustomer.util.GPSTracker;
 import arindatiko.example.com.travelmecustomer.util.SessionManager;
 import butterknife.BindView;
@@ -71,7 +68,7 @@ import retrofit2.Response;
 
 import static android.media.CamcorderProfile.get;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback, DirectionCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener  {
+public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback, DirectionCallback {
 
     private ArrayList<LatLng> dataMarker = new ArrayList<>();
     private List<String> akses = new ArrayList<>();
@@ -79,24 +76,21 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private List<LatLng> waypoint = new ArrayList<>();
     private ArrayList<Tujuan> tujuan = new ArrayList<>();
 
-    private Pesanan pesanan;
-
+    private GoogleMap mMap;
     private GPSTracker gps;
-    private LatLng asal, destination, pickUpLocation;
+    private Pesanan pesanan = new Pesanan();
+
+    private LatLng asal, destination;
+    private int id_user, id_pesanan;
     private double lat, lng;
-    private Double total_km, jasa, biaya_tambahan, rekomendasi;
-    private int radius = 1;
-    private boolean driverFound = false;
-    private String driverFoundId;
+    private Double total_km, jasa, biaya_tambahan, sisa_awal, biaya_transport, sisa_akhir, total_biaya;
 
     SharedPreferences sharedPreferences = null;
+    SharedPreferences.Editor editor;
     SessionManager sessionManager;
     ProgressDialog progressDialog;
 
-    private GoogleMap mMap;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    LocationRequest mLocationRequest;
+    DatabaseReference pesanan_db;
 
     @BindView(R.id.btnOrder)
     Button btnOrder;
@@ -110,16 +104,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         ButterKnife.bind(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
-        sharedPreferences = getApplicationContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
+        sharedPreferences = getApplicationContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);;
+        editor = sharedPreferences.edit();
         sessionManager = new SessionManager(this);
-
-        /*dataMarker.clear();
-        akses.clear();
-        waypoint.clear();
-        tujuan.clear();
-        daftarJarak.clear();*/
-
-        //myChoice = getIntent().getParcelableExtra(MYCHOICE);
+        id_user = Integer.parseInt(sessionManager.getId());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -132,70 +120,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         RekomendasiActivity.currentFragment = RekomendasiActivity.RESTAURANT;
     }
 
-    @OnClick(R.id.btnOrder)
-    public void toOrder(View view){
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Please wait...");
-        progressDialog.show();
-
-        //userId = sessionManager.getId();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.setLocation(sessionManager.getId(), new GeoLocation(lat, lng));
-        //geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-
-        //pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        createMarker(lat, lng, "Pick Up Here");
-        //mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Pick Up Here"));
-
-        btnOrder.setText("Mencari Driver....");
-
-        getClosestDriver();
-    }
-
-    private void getClosestDriver(){
-        DatabaseReference driversLocation = FirebaseDatabase.getInstance().getReference().child("driversAvailable");
-
-        GeoFire geofire = new GeoFire(driversLocation);
-
-        GeoQuery geoQuery = geofire.queryAtLocation(new GeoLocation(asal.latitude, asal.longitude), radius);
-        geoQuery.removeAllListeners();
-
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                if(!driverFound){
-                    driverFound = true;
-                    driverFoundId = key;
-                }
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                if(!driverFound){
-                    radius++;
-                    getClosestDriver();
-                }
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -205,100 +129,28 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         String id_kamar = sharedPreferences.getString("id_kamar", "");
         String id_menu = sharedPreferences.getString("id_menu", "");
 
-        Log.d("idMenu", id_menu);
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
-        gps = new GPSTracker(MapActivity.this);
+        gps = new GPSTracker(MapActivity2.this);
         if(gps.canGetLocation()){
             lat = gps.getLatitude();
             lng = gps.getLongitude();
             asal = new LatLng(lat, lng);
-            //Toast.makeText(this, (String.valueOf(gps.getLatitude()) + ", " +String.valueOf(gps.getLongitude())), Toast.LENGTH_SHORT).show();
         }
         mMap.setMyLocationEnabled(true);
-        //sessionManager.setLoc(String.valueOf(asal));
-
-        buildGoogleApiClient();
 
         Log.d("id", id_wisata);
         Log.d("id", id_kamar);
         Log.d("id", id_menu);
 
-       //waterFallGetApi(id_wisata, id_kamar, id_menu);
+        waterFallGetApi(id_wisata, id_kamar, id_menu);
     }
 
-    protected synchronized void buildGoogleApiClient(){
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        /*if(getApplicationContext() != null){
-            mLastLocation = location;
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-
-            //String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        }*/
-    }
-
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        /*LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        //String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String userId = sessionManager.getId();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
-
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);*/
-    }
-
-   /* private void waterFallGetApi(final String idWisata, final String idKamar, final String idMenu){
-        API.service_post.add_objek(sessionManager.getId(),idWisata, "wisata").enqueue(new Callback<ArrayList<Tujuan>>() {
+    private void waterFallGetApi(final String idWisata, final String idKamar, final String idMenu){
+        API.service_post.add_objek(id_user,idWisata, "wisata").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan = response.body();
@@ -324,7 +176,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     private void waterFallGetApiPhraseOne(final ArrayList<Tujuan> dataWisata, final String idKamar, final String idMenu){
-        API.service_post.add_objek(sessionManager.getId(), idKamar, "kamar").enqueue(new Callback<ArrayList<Tujuan>>() {
+        API.service_post.add_objek(id_user, idKamar, "kamar").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan = response.body();
@@ -349,7 +201,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private void waterFallGetApiPhraseTwo(final ArrayList<Tujuan> dataWisata, final ArrayList<Tujuan> dataKamar, final String idMenu){
         Log.d("id", idMenu);
-        API.service_post.add_objek(sessionManager.getId(), idMenu, "menu").enqueue(new Callback<ArrayList<Tujuan>>() {
+        API.service_post.add_objek(id_user, idMenu, "menu").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan = response.body();
@@ -396,7 +248,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         .and(waypoint)
                         .to(destination)
                         .transportMode(TransportMode.DRIVING)
-                        .execute(MapActivity.this);
+                        .execute(MapActivity2.this);
 
                 //itung harga berdasarkan akses
                 for (int i = 0; i < akses.size() ; i++) {
@@ -409,8 +261,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                 //kondisi budget
                 final MyChoice myChoice = getIntent().getExtras().getParcelable("myChoice");
-                //TextView tvMyBudget = getIntent().getExtras().getParcelable("budget");
-                //ProgressBar pbBudget = getIntent().getExtras().getParcelable("progressBar");
+
+                sisa_awal = myChoice.getBudget();
 
                 jasa = 50000d;
 
@@ -418,25 +270,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         myChoice.getTicketMotor(), myChoice.getTicketCar(), myChoice.getTicketBus()).enqueue(new Callback<Double>() {
                     @Override
                     public void onResponse(Call<Double> call, Response<Double> response) {
-                        rekomendasi = response.body();
-                        //myChoice.setBudget(myChoice.getBudget() + rekomendasi);
+                        biaya_transport = response.body();
 
-                        if(rekomendasi>myChoice.getBudget())
-                            Toast.makeText(MapActivity.this, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
-                        else{
-                            txtNominal.setText("Rp "+rekomendasi.toString());
-                            myChoice.setBudget(myChoice.getBudget() - rekomendasi); // sisa
+                        if(biaya_transport>myChoice.getBudget()) {
+                            Toast.makeText(MapActivity2.this, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
+                        }else{
+                            txtNominal.setText("Rp "+biaya_transport.toString());
+                            myChoice.setBudget(sisa_awal - biaya_transport); // sisa
+                            sisa_akhir = myChoice.getBudget();
+                            Log.d("sisa akhir", sisa_akhir.toString());
                         }
-
-                        //tampung total
-//                        myChoice.setTotalBiaya(myChoice.getTotalBiaya()+rekomendasi);
-//                        Double total = myChoice.getTotalBiaya();
-//                                Toast.makeText(MapActivity.this, total.toString(), Toast.LENGTH_SHORT).show();
-                        //myChoice.setBudget(myChoice.getBudget()-rekomendasi);
-//                        Double sisa = myChoice.getBudget();
-//                        Toast.makeText(MapActivity.this, sisa.toString(), Toast.LENGTH_SHORT).show();
-
-
                     }
 
                     @Override
@@ -444,12 +287,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
                     }
                 });
-
-                //progress bar
-                //pbBudget.setProgress(myChoice.getBudget().intValue());
-                //tvMyBudget.setText("Rp "+ myChoice.getBudget());
-                //tvTotalBudget.setText("Rp "+myChoice.getBudget());
-                //Log.d("budget", String.valueOf(myChoice.getBudget()));
             }
 
             @Override
@@ -457,7 +294,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             }
         });
-    }*/
+    }
 
     protected Marker createMarker(double latitude, double longitude, String title){
         return mMap.addMarker(new MarkerOptions()
@@ -516,5 +353,40 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return dist;
     }
 
+    @OnClick(R.id.btnOrder)
+    public void toOrder (View view){
+        String total = sharedPreferences.getString("totalbudget","");
+        total_biaya = Double.valueOf(total) - sisa_akhir;
+
+        progressDialog = new ProgressDialog(this);
+
+        API.service_post.send_pesanan(id_user,lat,lng,total_biaya).enqueue(new Callback<Pesanan>() {
+            @Override
+            public void onResponse(Call<Pesanan> call, Response<Pesanan> response) {
+                if (response.isSuccessful()) {
+                    pesanan = response.body();
+                    id_pesanan = pesanan.getId_pesanan();
+
+                    pesanan.setTujuan(tujuan);
+
+                    pesanan_db = FirebaseDatabase.getInstance().getReference("pesanan");
+                    pesanan_db.child(String.valueOf(id_pesanan)).setValue(pesanan);
+                    //pesanan_db.child(String.valueOf(id_pesanan)).child("tujuan").setValue();
+
+                    //Toast.makeText(MapActivity2.this, tujuan.toString(), Toast.LENGTH_SHORT).show();
+
+                    progressDialog.setMessage("Please Wait!");
+                    progressDialog.show();
+                } else {
+                    Toast.makeText(MapActivity2.this, "EROORRRRRRR", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Pesanan> call, Throwable t) {
+                Toast.makeText(MapActivity2.this, "EROORRRR22222", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
 

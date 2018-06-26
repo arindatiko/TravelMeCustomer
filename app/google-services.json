@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "745118097700-rf8ttradjis1i9kg19sc79vbrgisaie8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "arindatiko.example.com.travelmecustomer",
+            "certificate_hash": "2baf736c9352c64e6dc7944820b41daee1590263"
+          }
+        },
+        {
           "client_id": "745118097700-ouv5qqjnbnauj762klgj1sk3jdlrje9h.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745118097700-ouv5qqjnbnauj762klgj1sk3jdlrje9h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
