@@ -102,10 +102,12 @@ public class LoginActivity extends AppCompatActivity {
                     User user = response.body();
 
                     if (user != null) {
-                        sessionManager.setUid(user.getId_user().toString());
+                        sessionManager.setUid(String.valueOf(user.getId_user()));
                         sessionManager.setLogin(true);
                         sessionManager.setUsername(user.getUsername());
                         sessionManager.setUsertype(user.getUser_type());
+                        sessionManager.setNamaLengkap(user.getNama_lengkap());
+                        sessionManager.setNoTelp(user.getNo_telp());
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
@@ -141,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<User> call, Response<User> response) {
                     User user = response.body();
                     if(user != null){
-                        sessionManager.setUid(user.getId_user());
+                        sessionManager.setUid(String.valueOf(user.getId_user()));
                         sessionManager.setUsername(user.getUsername());
                         sessionManager.setUsertype(user.getUser_type());
 

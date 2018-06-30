@@ -57,6 +57,12 @@ public class API {
         );
 
         @FormUrlEncoded
+        @POST("user")
+        Call<User> get_user(
+                @Field("id_user") int id_user
+        );
+
+        @FormUrlEncoded
         @POST("package_recomendation")
         Call<ArrayList<Wisata>> package_recomendation_wisata(
                 @Field("list_id_wisata") String list_id_wisata,

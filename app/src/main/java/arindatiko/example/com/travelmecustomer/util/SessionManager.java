@@ -19,9 +19,11 @@ public class SessionManager {
     private static final String PREF_NAME = "session";
 
     private static final String KEY_IS_UID = "uid";
-    private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_IS_USERTYPE = "usertype";
     private static final String KEY_IS_USERNAME = "username";
+    private static final String KEY_IS_NAMALENGKAP = "namalengkap";
+    private static final String KEY_IS_NOTELP = "notelp";
+    private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_IS_CURRENT_LOC= "current_loc";
     private static final String KEY_IS_LOCATION_NAME= "location_name";
     //private static final String KEY_IS_checkinID= "checkin_id";
@@ -76,11 +78,27 @@ public class SessionManager {
     }
 
     public void setFirebaseToken(String token) {
-
         editor.putString(FBASE_TOKEN, token);
         editor.commit();
     }
 
+    public void setNamaLengkap(String namaLengkap){
+        editor.putString(KEY_IS_NAMALENGKAP, namaLengkap);
+        editor.commit();
+    }
+
+    public void setNoTelp(String noTelp){
+        editor.putString(KEY_IS_NOTELP, noTelp);
+        editor.commit();
+    }
+
+    public String getNamaLengkap(){
+        return pref.getString(KEY_IS_NAMALENGKAP, null);
+    }
+
+    public String getNoTelp(){
+        return pref.getString(KEY_IS_NOTELP, null);
+    }
     /*public int getCheckin(){
         return pref.getInt(KEY_IS_CHECKIN,0);
     }

@@ -57,6 +57,7 @@ import java.util.List;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 import arindatiko.example.com.travelmecustomer.model.Pesanan;
 import arindatiko.example.com.travelmecustomer.model.Tujuan;
+import arindatiko.example.com.travelmecustomer.model.User;
 import arindatiko.example.com.travelmecustomer.util.GPSTracker;
 import arindatiko.example.com.travelmecustomer.util.SessionManager;
 import butterknife.BindView;
@@ -78,6 +79,8 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private GPSTracker gps;
+
+    private User user = new User();
     private Pesanan pesanan = new Pesanan();
 
     private LatLng asal, destination;
@@ -108,6 +111,18 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
         editor = sharedPreferences.edit();
         sessionManager = new SessionManager(this);
         id_user = Integer.parseInt(sessionManager.getId());
+
+        API.service_post.get_user(id_user).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                user = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -368,12 +383,13 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
                     id_pesanan = pesanan.getId_pesanan();
 
                     pesanan.setTujuan(tujuan);
+                    pesanan.setUser(user);
 
                     pesanan_db = FirebaseDatabase.getInstance().getReference("pesanan");
                     pesanan_db.child(String.valueOf(id_pesanan)).setValue(pesanan);
                     //pesanan_db.child(String.valueOf(id_pesanan)).child("tujuan").setValue();
 
-                    //Toast.makeText(MapActivity2.this, tujuan.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapActivity2.this, pesanan.getUser().getNo_telp(), Toast.LENGTH_SHORT).show();
 
                     progressDialog.setMessage("Please Wait!");
                     progressDialog.show();
