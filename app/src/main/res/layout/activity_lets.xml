@@ -582,9 +582,29 @@
                                 </RelativeLayout>
 
                             </LinearLayout>
-
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="15dp"
+                                android:fontFamily="@font/segoe"
+                                android:text="Dewasa"
+                                android:textColor="@color/colorBlackLb"
+                                android:textSize="10sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="73dp"
+                                android:fontFamily="@font/segoe"
+                                android:text="Anak-anak"
+                                android:textColor="@color/colorBlackLb"
+                                android:textSize="10sp" />
+                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>

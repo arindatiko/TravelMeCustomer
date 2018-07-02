@@ -1,5 +1,7 @@
 package arindatiko.example.com.travelmecustomer.model;
 
+import java.util.ArrayList;
+
 public class Wisata {
     private int  id_wisata;
     private int id_user;

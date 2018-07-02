@@ -8,6 +8,37 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:745118097700:android:e95d71cfb7ed3787",
+        "android_client_info": {
+          "package_name": "arindatiko.example.com.travelme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745118097700-ouv5qqjnbnauj762klgj1sk3jdlrje9h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqycNhu1qB_oWhsFXf8NFlVYuj317_b4U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:745118097700:android:045dc6f5c447ac8f",
         "android_client_info": {
           "package_name": "arindatiko.example.com.travelmecustomer"

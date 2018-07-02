@@ -1,16 +1,12 @@
 package arindatiko.example.com.travelmecustomer;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -29,14 +25,6 @@ import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,7 +34,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -76,6 +63,8 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
     private List<Double> daftarJarak = new ArrayList<>();
     private List<LatLng> waypoint = new ArrayList<>();
     private ArrayList<Tujuan> tujuan = new ArrayList<>();
+    private ArrayList<String> upload = new ArrayList<>();
+    //private ArrayList<ArrayList<Tujuan>> coba = new ArrayList<ArrayList<Tujuan>>();
 
     private GoogleMap mMap;
     private GPSTracker gps;
@@ -84,7 +73,8 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
     private Pesanan pesanan = new Pesanan();
 
     private LatLng asal, destination;
-    private int id_user, id_pesanan;
+    private int id_user;
+    private String id_pesanan;
     private double lat, lng;
     private Double total_km, jasa, biaya_tambahan, sisa_awal, biaya_transport, sisa_akhir, total_biaya;
 
@@ -170,11 +160,14 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan = response.body();
 
+                upload.add(idWisata);
+
                 for (int i = 0; i < tujuan.size(); i++){
                     if(tujuan.get(i).getJenis_layanan().equals("wisata")) {
                         createMarker(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng(),
                                 tujuan.get(i).getWisata().get(0).getNama());
                         akses.add(tujuan.get(i).getWisata().get(0).getAkses());
+                        dataMarker.add(new LatLng(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng()));
                     }
                 }
                 waterFallGetApiPhraseOne(response.body(), idKamar, idMenu);
@@ -195,12 +188,14 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan = response.body();
-
+                upload.add(idKamar);
                 for (int i = 0; i < tujuan.size(); i++){
                     if(tujuan.get(i).getJenis_layanan().equals("kamar")) {
                         createMarker(tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(),tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lng(),
                                 tujuan.get(i).getKamar().get(0).getPenginapan().getNama());
                         akses.add(tujuan.get(i).getKamar().get(0).getPenginapan().getAkses());
+                        dataMarker.add(new LatLng(tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(), tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lng()));
+                        //upload.add(tujuan.get(i).getKamar().get(0));
                     }
 
                 }
@@ -220,12 +215,13 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan = response.body();
-
+                upload.add(idMenu);
                 for (int i = 0; i < tujuan.size(); i++) {
                     if(tujuan.get(i).getJenis_layanan().equals("menu")) {
                         createMarker(tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lat(), tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lng(),
                                 tujuan.get(i).getMenu().get(0).getKuliner().getNama());
                         akses.add(tujuan.get(i).getMenu().get(0).getKuliner().getAkses());
+                        dataMarker.add(new LatLng(response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lat(), response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
                     }
                 }
 
@@ -233,7 +229,7 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
                 Log.d("idMenu",idMenu);
 
                 //draw marker all
-                for (int i = 0; i < tujuan.size(); i++) {
+                /*for (int i = 0; i < tujuan.size(); i++) {
                     if(tujuan.get(i).getJenis_layanan().equals("wisata")){
                         dataMarker.add(new LatLng(dataWisata.get(i).getWisata().get(0).getPosisi_lat(), dataWisata.get(i).getWisata().get(0).getPosisi_lng()));
                     }else if(tujuan.get(i).getJenis_layanan().equals("kamar")){
@@ -241,7 +237,19 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
                     }else if(response.body().get(i).getJenis_layanan().equals("menu")){
                         dataMarker.add(new LatLng(response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lat(), response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
                     }
-                }
+                }*/
+                /*for (int i = 0; i < upload.size(); i++) {
+                    upload.get(i)
+                    for(int j = 0; j<tujuan.size(); i++) {
+                        if (tujuan.get(i).getJenis_layanan().equals("wisata")) {
+                            dataMarker.add(new LatLng(dataWisata.get(i).getWisata().get(0).getPosisi_lat(), dataWisata.get(i).getWisata().get(0).getPosisi_lng()));
+                        } else if (tujuan.get(i).getJenis_layanan().equals("kamar")) {
+                            dataMarker.add(new LatLng(dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(), dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lng()));
+                        } else if (response.body().get(i).getJenis_layanan().equals("menu")) {
+                            dataMarker.add(new LatLng(response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lat(), response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
+                        }
+                    }
+                }*/
 
                 //hitung jarak
                 for(int i=0; i<dataMarker.size(); i++){
@@ -380,16 +388,20 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
             public void onResponse(Call<Pesanan> call, Response<Pesanan> response) {
                 if (response.isSuccessful()) {
                     pesanan = response.body();
-                    id_pesanan = pesanan.getId_pesanan();
+                    id_pesanan = String.valueOf(pesanan.getId_pesanan());
 
-                    pesanan.setTujuan(tujuan);
-                    pesanan.setUser(user);
+                    /*pesanan.setTujuan(tujuan);
+                    pesanan.setUser(user);*/
 
                     pesanan_db = FirebaseDatabase.getInstance().getReference("pesanan");
-                    pesanan_db.child(String.valueOf(id_pesanan)).setValue(pesanan);
+                    pesanan_db.child(id_pesanan).setValue(pesanan);
+                    Log.d("id", pesanan_db.getKey());
+
+                    pesanan_db.child(id_pesanan).child("tujuan").setValue(upload);
+                    pesanan_db.child(id_pesanan).child("user").setValue(user);
                     //pesanan_db.child(String.valueOf(id_pesanan)).child("tujuan").setValue();
 
-                    Toast.makeText(MapActivity2.this, pesanan.getUser().getNo_telp(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MapActivity2.this, pesanan.getUser().getNo_telp(), Toast.LENGTH_SHORT).show();
 
                     progressDialog.setMessage("Please Wait!");
                     progressDialog.show();

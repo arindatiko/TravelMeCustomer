@@ -7,6 +7,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -17,8 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 
@@ -295,29 +300,7 @@ public class LetsActivity extends AppCompatActivity {
             }
         });
 
-        /*etBudget.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                try {
-                    budget = Double.parseDouble(etBudget.getText().toString());
-                } catch (Exception e){
-                    budget = 0.0;
-                }
-                String pattern = "###,###.###";
-                DecimalFormat decimalFormat = new DecimalFormat(pattern);
-
-                String format = decimalFormat.format(etBudget);
-                etBudget.setText("");
-            }
-        });*/
-
-        /*etBudget.setOnKeyListener(new View.OnKeyListener() {
-            @Override     
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                return false;
-            }
-        });*/
-
+        //etBudget.addTextChangedListener(onTextChangedListener());
         rvTravelling.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -327,7 +310,7 @@ public class LetsActivity extends AppCompatActivity {
                     budget = 0.0;
                 }
 
-                if (budget == 0.0) {
+                if (budget == 0) {
                     Toast.makeText(LetsActivity.this, "Isi budget Anda.", Toast.LENGTH_SHORT).show();
                 } else if (categoryWisata.size() == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field wisata.", Toast.LENGTH_SHORT).show();
@@ -345,5 +328,47 @@ public class LetsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private TextWatcher onTextChangedListener() {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                etBudget.removeTextChangedListener(this);
+
+                try {
+                    String originalString = s.toString();
+
+                    Long longval;
+                    if (originalString.contains(",")) {
+                        originalString = originalString.replaceAll(",", "");
+                    }
+                    longval = Long.parseLong(originalString);
+
+                    DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+                    formatter.applyPattern("#,###,###,###,###");
+                    String formattedString = formatter.format(longval);
+
+                    //setting text after format to EditText
+                    etBudget.setText(formattedString);
+                    etBudget.setSelection(etBudget.getText().length());
+                    budget = Double.valueOf(etBudget.getText().toString());
+                } catch (NumberFormatException nfe) {
+                    nfe.printStackTrace();
+                }
+
+                etBudget.addTextChangedListener(this);
+            }
+        };
     }
 }
