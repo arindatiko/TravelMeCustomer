@@ -31,6 +31,18 @@ public class MyChoice implements Parcelable {
         this.jumDay = jumDay;
     }
 
+    /*public MyChoice(Double budget, List<String> categoryWisata, int ticketMotor, int ticketCar, int ticketBus, int ticketAdult, int ticketChild, int jumKamar, int jumDay) {
+        this.budget = budget;
+        this.categoryWisata = categoryWisata;
+        this.ticketMotor = ticketMotor;
+        this.ticketCar = ticketCar;
+        this.ticketBus = ticketBus;
+        this.ticketAdult = ticketAdult;
+        this.ticketChild = ticketChild;
+        this.jumKamar = jumKamar;
+        this.jumDay = jumDay;
+    }*/
+
     public Double getBudget_awal() {
         return budget_awal;
     }
@@ -73,6 +85,10 @@ public class MyChoice implements Parcelable {
 
     public int getTicketChild() {
         return ticketChild;
+    }
+
+    public void setJumPorsi(int jumPorsi) {
+        this.jumPorsi = jumPorsi;
     }
 
     public int getJumPorsi() {

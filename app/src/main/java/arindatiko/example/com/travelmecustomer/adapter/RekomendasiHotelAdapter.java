@@ -62,6 +62,8 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
         final Double totalHarga = kamar.getHarga() * myChoice.getJumKamar() * myChoice.getJumDay();
 
         holder.tvTitle.setText(kamar.getNama());
+        holder.tvResto.setVisibility(View.VISIBLE);
+        holder.tvResto.setText(kamar.getPenginapan().getNama());
         holder.tvPrice.setText("Rp "+totalHarga);
         holder.tvDetailPrice.setText("Jumlah kamar : "+ myChoice.getJumKamar() +"\nJumlah hari : "+ myChoice.getJumDay() +"\nHarga kamar : "+ kamar.getHarga());
         holder.tvTime.setVisibility(View.GONE);
@@ -160,7 +162,7 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
 
         private CardView cardItem;
         private ImageView imgItem, imgCall, imgCheck;
-        private TextView tvTitle, tvAddress, tvPrice, tvDetailPrice, tvTime;
+        private TextView tvTitle, tvAddress, tvPrice, tvDetailPrice, tvTime, tvResto;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -174,6 +176,7 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
             tvPrice = (TextView) itemView.findViewById(R.id.tv_price);
             tvDetailPrice = (TextView) itemView.findViewById(R.id.tv_detail_price);
             tvTime = (TextView) itemView.findViewById(R.id.tv_time);
+            tvResto = (TextView) itemView.findViewById(R.id.tv_resto);
         }
     }
 }

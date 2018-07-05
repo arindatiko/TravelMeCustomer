@@ -618,6 +618,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="8dp"
+                android:visibility="gone"
                 app:cardCornerRadius="4dp">
 
                 <LinearLayout
@@ -677,6 +678,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Porsi"
+                            android:textSize="10sp"
+                            android:textColor="@color/colorBlackLb"
+                            android:fontFamily="@font/segoe"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="(Jumlah porsi termasuk 3x makan dalam sehari)"
                             android:textSize="10sp"
                             android:textColor="@color/colorBlackLb"
                             android:fontFamily="@font/segoe"/>

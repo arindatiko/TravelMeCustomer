@@ -40,6 +40,11 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
     private TextView tvMyBudget;
     private ProgressBar pbBudget;
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
+    private int choose = 0;
+
     public RekomendasiTravelAdapter(Context context, List<Wisata> travels, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
         this.travels = travels;
@@ -47,8 +52,8 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
         this.tvMyBudget = tvMyBudget;
         this.pbBudget = pbBudget;
 
-        SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         editor.putString("totalbudget", String.valueOf(myChoice.getBudget()));
         editor.commit();
     }
@@ -91,7 +96,11 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
             }
         });*/
 
-
+        /*String key = sharedPreferences.getString("key_wisata", "");
+        if(!key.equals("")) {
+            holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
+        }
+*/
         Glide.with(context)
                 .load(wisata.getFoto())
                 .into(holder.imgItem);
@@ -116,10 +125,11 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
             @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
+                sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
+                editor = sharedPreferences.edit();
 
                 if(sharedPreferences.getString("id_wisata","").contains(","+String.valueOf(wisata.getId_wisata()))){
+                    choose = 0;
                     holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
 
                     myChoice.setBudget(myChoice.getBudget()+totalHarga);
@@ -139,9 +149,9 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
                     else {
                         holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
 
-                        myChoice.setBudget(myChoice.getBudget()-totalHarga);
+                        myChoice.setBudget(myChoice.getBudget() - totalHarga);
 
-                        String add_wisata = sharedPreferences.getString("id_wisata","")+","+wisata.getId_wisata();
+                        String add_wisata = sharedPreferences.getString("id_wisata", "") + "," + wisata.getId_wisata();
                         editor.putString("id_wisata", String.valueOf(add_wisata));
                         editor.commit();
                     }

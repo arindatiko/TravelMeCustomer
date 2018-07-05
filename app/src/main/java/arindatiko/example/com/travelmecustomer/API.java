@@ -166,6 +166,29 @@ public class API {
                 @Field("id_tujuan") String id_tujuan,
                 @Field("jenis_layanan") String jenis_layanan
         );
+        @FormUrlEncoded
+        @POST("rekomendasi")
+        Call<ArrayList<Wisata>> add_objek_wisata(
+                @Field("id_user") int id_user,
+                @Field("id_tujuan") String id_tujuan,
+                @Field("jenis_layanan") String jenis_layanan
+        );
+
+        @FormUrlEncoded
+        @POST("rekomendasi")
+        Call<ArrayList<Kamar>> add_objek_kamar(
+                @Field("id_user") int id_user,
+                @Field("id_tujuan") String id_tujuan,
+                @Field("jenis_layanan") String jenis_layanan
+        );
+
+        @FormUrlEncoded
+        @POST("rekomendasi")
+        Call<ArrayList<Menu>> add_objek_menu(
+                @Field("id_user") int id_user,
+                @Field("id_tujuan") String id_tujuan,
+                @Field("jenis_layanan") String jenis_layanan
+        );
 
         @FormUrlEncoded
         @POST("pesanan")

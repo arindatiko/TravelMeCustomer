@@ -41,10 +41,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import arindatiko.example.com.travelmecustomer.model.Kamar;
+import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 import arindatiko.example.com.travelmecustomer.model.Pesanan;
 import arindatiko.example.com.travelmecustomer.model.Tujuan;
 import arindatiko.example.com.travelmecustomer.model.User;
+import arindatiko.example.com.travelmecustomer.model.Wisata;
 import arindatiko.example.com.travelmecustomer.util.GPSTracker;
 import arindatiko.example.com.travelmecustomer.util.SessionManager;
 import butterknife.BindView;
@@ -59,10 +62,16 @@ import static android.media.CamcorderProfile.get;
 public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback, DirectionCallback {
 
     private ArrayList<LatLng> dataMarker = new ArrayList<>();
+    private ArrayList<Wisata> wisata = new ArrayList<>();
+    private ArrayList<Kamar> kamar = new ArrayList<>();
+    private ArrayList<Menu> menu = new ArrayList<>();
+    //private ArrayList<LatLng> dataMarker = new ArrayList<>();
     private List<String> akses = new ArrayList<>();
     private List<Double> daftarJarak = new ArrayList<>();
     private List<LatLng> waypoint = new ArrayList<>();
     private ArrayList<Tujuan> tujuan = new ArrayList<>();
+    private ArrayList<Tujuan> tujuan1 = new ArrayList<>();
+//    private Tujuan tujuan;
     private ArrayList<String> upload = new ArrayList<>();
     //private ArrayList<ArrayList<Tujuan>> coba = new ArrayList<ArrayList<Tujuan>>();
 
@@ -158,18 +167,17 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
         API.service_post.add_objek(id_user,idWisata, "wisata").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
-                tujuan = response.body();
-
-                upload.add(idWisata);
+                tujuan.addAll(response.body());
 
                 for (int i = 0; i < tujuan.size(); i++){
                     if(tujuan.get(i).getJenis_layanan().equals("wisata")) {
                         createMarker(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng(),
                                 tujuan.get(i).getWisata().get(0).getNama());
                         akses.add(tujuan.get(i).getWisata().get(0).getAkses());
-                        dataMarker.add(new LatLng(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng()));
+                        //dataMarker.add(new LatLng(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng()));
                     }
                 }
+
                 waterFallGetApiPhraseOne(response.body(), idKamar, idMenu);
                 Log.d("wisata",response.body().toString());
                 Log.d("idWisata",idWisata);
@@ -178,7 +186,6 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onFailure(Call<ArrayList<Tujuan>> call, Throwable t) {
                 Log.d("error",t.getMessage());
-
             }
         });
     }
@@ -187,24 +194,21 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
         API.service_post.add_objek(id_user, idKamar, "kamar").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
-                tujuan = response.body();
-                upload.add(idKamar);
+                tujuan.addAll(response.body());
+
                 for (int i = 0; i < tujuan.size(); i++){
                     if(tujuan.get(i).getJenis_layanan().equals("kamar")) {
                         createMarker(tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(),tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lng(),
                                 tujuan.get(i).getKamar().get(0).getPenginapan().getNama());
                         akses.add(tujuan.get(i).getKamar().get(0).getPenginapan().getAkses());
-                        dataMarker.add(new LatLng(tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(), tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lng()));
-                        //upload.add(tujuan.get(i).getKamar().get(0));
                     }
-
                 }
 
                 waterFallGetApiPhraseTwo(dataWisata, response.body(), idMenu);
             }
             @Override
             public void onFailure(Call<ArrayList<Tujuan>> call, Throwable t) {
-
+                Log.d("error",t.getMessage());
             }
         });
     }
@@ -214,14 +218,13 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
         API.service_post.add_objek(id_user, idMenu, "menu").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
-                tujuan = response.body();
-                upload.add(idMenu);
+                tujuan.addAll(response.body());
+
                 for (int i = 0; i < tujuan.size(); i++) {
                     if(tujuan.get(i).getJenis_layanan().equals("menu")) {
                         createMarker(tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lat(), tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lng(),
                                 tujuan.get(i).getMenu().get(0).getKuliner().getNama());
                         akses.add(tujuan.get(i).getMenu().get(0).getKuliner().getAkses());
-                        dataMarker.add(new LatLng(response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lat(), response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
                     }
                 }
 
@@ -229,27 +232,15 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
                 Log.d("idMenu",idMenu);
 
                 //draw marker all
-                /*for (int i = 0; i < tujuan.size(); i++) {
-                    if(tujuan.get(i).getJenis_layanan().equals("wisata")){
-                        dataMarker.add(new LatLng(dataWisata.get(i).getWisata().get(0).getPosisi_lat(), dataWisata.get(i).getWisata().get(0).getPosisi_lng()));
-                    }else if(tujuan.get(i).getJenis_layanan().equals("kamar")){
-                        dataMarker.add(new LatLng(dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(), dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lng()));
-                    }else if(response.body().get(i).getJenis_layanan().equals("menu")){
-                        dataMarker.add(new LatLng(response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lat(), response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
+                for (int i = 0; i < tujuan.size(); i++) {
+                    if (tujuan.get(i).getJenis_layanan().equals("wisata")) {
+                        dataMarker.add(new LatLng(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng()));
+                    } else if (tujuan.get(i).getJenis_layanan().equals("kamar")) {
+                        dataMarker.add(new LatLng(tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(), tujuan.get(i).getKamar().get(0).getPenginapan().getPosisi_lng()));
+                    } else if (tujuan.get(i).getJenis_layanan().equals("menu")) {
+                        dataMarker.add(new LatLng(tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lat(), tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
                     }
-                }*/
-                /*for (int i = 0; i < upload.size(); i++) {
-                    upload.get(i)
-                    for(int j = 0; j<tujuan.size(); i++) {
-                        if (tujuan.get(i).getJenis_layanan().equals("wisata")) {
-                            dataMarker.add(new LatLng(dataWisata.get(i).getWisata().get(0).getPosisi_lat(), dataWisata.get(i).getWisata().get(0).getPosisi_lng()));
-                        } else if (tujuan.get(i).getJenis_layanan().equals("kamar")) {
-                            dataMarker.add(new LatLng(dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lat(), dataKamar.get(i).getKamar().get(0).getPenginapan().getPosisi_lng()));
-                        } else if (response.body().get(i).getJenis_layanan().equals("menu")) {
-                            dataMarker.add(new LatLng(response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lat(), response.body().get(i).getMenu().get(0).getKuliner().getPosisi_lng()));
-                        }
-                    }
-                }*/
+                }
 
                 //hitung jarak
                 for(int i=0; i<dataMarker.size(); i++){
@@ -390,14 +381,11 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
                     pesanan = response.body();
                     id_pesanan = String.valueOf(pesanan.getId_pesanan());
 
-                    /*pesanan.setTujuan(tujuan);
-                    pesanan.setUser(user);*/
-
                     pesanan_db = FirebaseDatabase.getInstance().getReference("pesanan");
                     pesanan_db.child(id_pesanan).setValue(pesanan);
                     Log.d("id", pesanan_db.getKey());
 
-                    pesanan_db.child(id_pesanan).child("tujuan").setValue(upload);
+                    pesanan_db.child(id_pesanan).child("tujuan").setValue(tujuan);
                     pesanan_db.child(id_pesanan).child("user").setValue(user);
                     //pesanan_db.child(String.valueOf(id_pesanan)).child("tujuan").setValue();
 

@@ -42,7 +42,7 @@ public class LetsActivity extends AppCompatActivity {
 
     private Double budget = 0.0;
     private List<String> categoryWisata = new ArrayList<>();
-    private int ticketMotor = 0, ticketCar = 0, ticketBus = 0, ticketAdult = 0, ticketChild = 0, jumPorsi = 0, jumKamar = 0, jumDay = 0;
+    private int temp = 0, ticketMotor = 0, ticketCar = 0, ticketBus = 0, ticketAdult = 0, ticketChild = 0, jumPorsi = 0, jumKamar = 0, jumDay = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,24 +148,40 @@ public class LetsActivity extends AppCompatActivity {
         rvAdultMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ticketAdult > 0) ticketAdult--;
+                if (ticketAdult > 0) {
+                    ticketAdult--;
+                    jumPorsi = jumPorsi - 3;
+                    temp = ticketAdult;
+                }
                 tvAdult.setText(String.valueOf(ticketAdult));
+                tvPorsi.setText(String.valueOf(jumPorsi));
             }
         });
 
         rvAdultPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //jumPorsi++;
                 ticketAdult++;
+                jumPorsi = ticketAdult * 3;
+                temp = ticketAdult;
                 tvAdult.setText(String.valueOf(ticketAdult));
+                tvPorsi.setText(String.valueOf(jumPorsi));
             }
         });
+
+        //jumPorsi = ticketAdult;
 
         rvChildMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ticketChild > 0) ticketChild--;
+                if (ticketChild > 0) {
+                    ticketChild--;
+                    //jumPorsi--;
+                    jumPorsi = jumPorsi - 3;
+                }
                 tvChild.setText(String.valueOf(ticketChild));
+                tvPorsi.setText(String.valueOf(jumPorsi));
             }
         });
 
@@ -173,9 +189,15 @@ public class LetsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ticketChild++;
+                //jumPorsi++;
+                jumPorsi = jumPorsi + 3;
                 tvChild.setText(String.valueOf(ticketChild));
+                tvPorsi.setText(String.valueOf(jumPorsi));
             }
         });
+
+        /*jumPorsi = ticketAdult + ticketChild;
+        tvPorsi.setText(String.valueOf(jumPorsi));*/
 
         rvPorsiMin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -274,7 +296,7 @@ public class LetsActivity extends AppCompatActivity {
             }
         });
 
-        lnRestaurant.setOnClickListener(new View.OnClickListener() {
+        /*lnRestaurant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (lnRestaurantDetail.getVisibility() == View.GONE) {
@@ -285,7 +307,7 @@ public class LetsActivity extends AppCompatActivity {
                     imgIcRestaurant.setImageResource(R.drawable.ic_ai_plus);
                 }
             }
-        });
+        });*/
 
         lnHotel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,12 +336,13 @@ public class LetsActivity extends AppCompatActivity {
                     Toast.makeText(LetsActivity.this, "Isi budget Anda.", Toast.LENGTH_SHORT).show();
                 } else if (categoryWisata.size() == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field wisata.", Toast.LENGTH_SHORT).show();
-                } else if (jumPorsi == 0) {
+                } /*else if (jumPorsi == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field kuliner.", Toast.LENGTH_SHORT).show();
-                } else if (jumDay == 0 || jumKamar == 0) {
+                }*/ else if (jumDay == 0 || jumKamar == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field penginapan.", Toast.LENGTH_SHORT).show();
                 } else {
                     MyChoice myChoice = new MyChoice(budget, categoryWisata, ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild, jumPorsi,jumKamar, jumDay);
+                    //MyChoice myChoice = new MyChoice(budget, categoryWisata, ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild,jumKamar, jumDay);
 
                     Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
                     intent.putExtra(MYCHOICE, myChoice);
