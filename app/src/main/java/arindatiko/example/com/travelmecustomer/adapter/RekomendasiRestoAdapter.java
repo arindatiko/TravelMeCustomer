@@ -32,10 +32,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.DetailKulinerActivity;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 
+import static arindatiko.example.com.travelmecustomer.DetailKulinerActivity.KULINER_ID;
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRestoAdapter.MyViewHolder> {
@@ -49,7 +51,7 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-    private int jumPorsi = 0, kode = 0, cek = 0;
+    private int jumPorsi = 0;
     private Double totalHarga = 0.0;
     private boolean click = false;
 
@@ -80,45 +82,38 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
         holder.tvDetailPrice.setText("Harga per porsi : Rp "+menu.getHarga());
         holder.tvTime.setText(menu.getKuliner().getJam_buka() +" wib - "+ menu.getKuliner().getJam_tutup() +" wib");
 
-       /* holder.imgDrink.setImageResource(menu.getDrinks().get(0).getImage());
-        holder.imgFood.setImageResource(menu.getFoods().get(0).getImage());*/
+//        holder.imgDrink.setImageResource(menu.getDrinks().get(0).getImage());
+//        holder.imgFood.setImageResource(menu.getFoods().get(0).getImage());
 
-        /*holder.cardItem.setOnClickListener(new View.OnClickListener() {
+        holder.cardItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailKulinerActivity.class);
                 intent.putExtra(KULINER_ID, menu.getId_kuliner());
                 context.startActivity(intent);
             }
-        });*/
+        });
 
         holder.imgCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(cek == 0){
-                    holder.ln_porsi.setVisibility(View.VISIBLE);
-                    holder.imgHide.setVisibility(View.VISIBLE);
-                    cek++;
-                }
+                holder.ln_porsi.setVisibility(View.VISIBLE);
+                holder.imgHide.setVisibility(View.VISIBLE);
 
                 if(sharedPreferences.getString("id_menu","").contains(","+String.valueOf(menu.getId_menu()))){
                     holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
 
                     String add_menu = sharedPreferences.getString("id_menu","");
                     add_menu = add_menu.replace(","+String.valueOf(menu.getId_menu()),"");
-
                     editor.putString("id_menu", String.valueOf(add_menu));
                     editor.commit();
                 }
                 else {
-                    int choose = 0;
-                    if(choose == 0) {
-                        holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
-                        String add_menu = sharedPreferences.getString("id_menu", "") + "," + menu.getId_menu();
+                    holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
 
-                        editor.putString("id_menu", String.valueOf(add_menu));
-                        editor.commit();
-                    }
+                    String add_menu = sharedPreferences.getString("id_menu", "") + "," + menu.getId_menu();
+                    editor.putString("id_menu", String.valueOf(add_menu));
+                    editor.commit();
                 }
 
                 Log.d("selectedMenu",sharedPreferences.getString("id_menu",""));
@@ -163,14 +158,12 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
         holder.imgHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(kode % 2 == 0){
+                if(holder.imgHide.getVisibility() == View.VISIBLE){
                     holder.imgHide.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
                     holder.ln_porsi.setVisibility(View.GONE);
-                    kode++;
                 }else{
                     holder.imgHide.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
                     holder.ln_porsi.setVisibility(View.VISIBLE);
-                    kode++;
                 }
             }
         });

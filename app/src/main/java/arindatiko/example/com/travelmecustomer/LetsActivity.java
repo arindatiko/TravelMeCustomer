@@ -1,16 +1,19 @@
 package arindatiko.example.com.travelmecustomer;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,10 +21,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.archit.calendardaterangepicker.customviews.DateRangeCalendarView;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,23 +38,24 @@ public class LetsActivity extends AppCompatActivity {
 
     private EditText etBudget;
     private TextView tvCatAlam, tvCatBuatan, tvMotor, tvCar, tvBus, tvAdult, tvChild, tvPorsi,
-            tvKamar, tvDay;
+            tvKamar, tvDay, tvTanggalMulai, tvTanggalSelesai;
     private LinearLayout lnTravel, lnRestaurant, lnHotel, lnTravelDetail, lnRestaurantDetail,
             lnHotelDetail, lnCatAlam, lnCatBuatan;
     private ImageView imgIcTravel, imgIcRestaurant, imgIcHotel, imgCatAlam, imgCatBuatan;
     private RelativeLayout rvTravelling, rvMotorMin, rvMotorPlus, rvCarMin, rvCarPlus, rvBusMin,
             rvBusPlus, rvAdultMin, rvAdultPlus, rvChildMin, rvChildPlus, rvPorsiMin, rvPorsiPlus,
-            rvKamarMin, rvKamarPlus, rvDayMin, rvDayPlus;
+            rvKamarMin, rvKamarPlus, rvDayMin, rvDayPlus, rvTanggalMulai, rvTanggalSelesai;
+    private DateRangeCalendarView vCalendar;
 
     private Double budget = 0.0;
     private List<String> categoryWisata = new ArrayList<>();
     private int temp = 0, ticketMotor = 0, ticketCar = 0, ticketBus = 0, ticketAdult = 0, ticketChild = 0, jumPorsi = 0, jumKamar = 0, jumDay = 0;
+    private int mYear, mMonth, mDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lets);
-
 
         etBudget = (EditText) findViewById(R.id.et_budget);
 
@@ -62,6 +69,8 @@ public class LetsActivity extends AppCompatActivity {
         tvPorsi = (TextView) findViewById(R.id.tv_porsi);
         tvKamar = (TextView) findViewById(R.id.tv_kamar);
         tvDay = (TextView) findViewById(R.id.tv_day);
+        tvTanggalMulai = (TextView) findViewById(R.id.tv_tanggal_mulai);
+        tvTanggalSelesai = (TextView) findViewById(R.id.tv_tanggal_selesai);
 
         lnTravel = (LinearLayout) findViewById(R.id.ln_travel);
         lnRestaurant = (LinearLayout) findViewById(R.id.ln_restaurant);
@@ -95,6 +104,8 @@ public class LetsActivity extends AppCompatActivity {
         rvKamarPlus = (RelativeLayout) findViewById(R.id.rv_kamar_plus);
         rvDayMin = (RelativeLayout) findViewById(R.id.rv_day_min);
         rvDayPlus = (RelativeLayout) findViewById(R.id.rv_day_plus);
+        rvTanggalMulai = (RelativeLayout) findViewById(R.id.rv_tanggal_mulai);
+        rvTanggalSelesai = (RelativeLayout) findViewById(R.id.rv_tanggal_selesai);
 
         rvMotorMin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,20 +175,17 @@ public class LetsActivity extends AppCompatActivity {
                 //jumPorsi++;
                 ticketAdult++;
                 jumPorsi = ticketAdult * 3;
-                temp = ticketAdult;
+                //temp = ticketAdult;
                 tvAdult.setText(String.valueOf(ticketAdult));
                 tvPorsi.setText(String.valueOf(jumPorsi));
             }
         });
-
-        //jumPorsi = ticketAdult;
 
         rvChildMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (ticketChild > 0) {
                     ticketChild--;
-                    //jumPorsi--;
                     jumPorsi = jumPorsi - 3;
                 }
                 tvChild.setText(String.valueOf(ticketChild));
@@ -189,15 +197,11 @@ public class LetsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ticketChild++;
-                //jumPorsi++;
                 jumPorsi = jumPorsi + 3;
                 tvChild.setText(String.valueOf(ticketChild));
                 tvPorsi.setText(String.valueOf(jumPorsi));
             }
         });
-
-        /*jumPorsi = ticketAdult + ticketChild;
-        tvPorsi.setText(String.valueOf(jumPorsi));*/
 
         rvPorsiMin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,6 +251,27 @@ public class LetsActivity extends AppCompatActivity {
             }
         });
 
+        rvTanggalMulai.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                final DatePickerDialog datePickerDialog = new DatePickerDialog(LetsActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+
+                        tvTanggalMulai.setText(dayOfMonth + "-" + mMonth + "-" + year);
+                    }
+                }, mYear, mMonth, mDay);
+
+                datePickerDialog.show();
+            }
+        });
+
         lnCatAlam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,7 +286,6 @@ public class LetsActivity extends AppCompatActivity {
                     tvCatAlam.setTextColor(Color.parseColor("#656565"));
                     imgCatAlam.setImageTintList(ColorStateList.valueOf(Color.parseColor("#656565")));
                 }
-                //Toast.makeText(LetsActivity.this, categoryWisata.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -296,7 +320,7 @@ public class LetsActivity extends AppCompatActivity {
             }
         });
 
-        /*lnRestaurant.setOnClickListener(new View.OnClickListener() {
+        lnRestaurant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (lnRestaurantDetail.getVisibility() == View.GONE) {
@@ -307,7 +331,7 @@ public class LetsActivity extends AppCompatActivity {
                     imgIcRestaurant.setImageResource(R.drawable.ic_ai_plus);
                 }
             }
-        });*/
+        });
 
         lnHotel.setOnClickListener(new View.OnClickListener() {
             @Override

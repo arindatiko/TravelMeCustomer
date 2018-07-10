@@ -29,10 +29,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.DetailKamarActivity;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 
+import static arindatiko.example.com.travelmecustomer.DetailKamarActivity.KAMAR_ID;
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHotelAdapter.MyViewHolder> {
@@ -68,14 +70,14 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
         holder.tvDetailPrice.setText("Jumlah kamar : "+ myChoice.getJumKamar() +"\nJumlah hari : "+ myChoice.getJumDay() +"\nHarga kamar : "+ kamar.getHarga());
         holder.tvTime.setVisibility(View.GONE);
 
-       /* holder.cardItem.setOnClickListener(new View.OnClickListener() {
+        holder.cardItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailKamarActivity.class);
                 intent.putExtra(KAMAR_ID, kamar.getId_kamar());
                 context.startActivity(intent);
             }
-        });*/
+        });
 
         holder.imgCheck.setOnClickListener(new View.OnClickListener() {
             @Override

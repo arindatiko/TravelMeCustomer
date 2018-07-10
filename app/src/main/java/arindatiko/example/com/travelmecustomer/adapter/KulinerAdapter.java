@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.DetailKulinerActivity;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Kuliner;
 
+import static arindatiko.example.com.travelmecustomer.DetailKulinerActivity.KULINER_ID;
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class KulinerAdapter extends RecyclerView.Adapter<KulinerAdapter.MyViewHolder> {
@@ -68,14 +70,14 @@ public class KulinerAdapter extends RecyclerView.Adapter<KulinerAdapter.MyViewHo
             holder.tvAddress.setText("-");
         }
 
-        /*holder.cardItem.setOnClickListener(new View.OnClickListener() {
+        holder.cardItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailKulinerActivity.class);
                 intent.putExtra(KULINER_ID, kuliner.getId_kuliner());
                 context.startActivity(intent);
             }
-        });*/
+        });
     }
 
     @Override

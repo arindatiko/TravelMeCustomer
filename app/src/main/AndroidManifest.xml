@@ -42,28 +42,26 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent" />
-        <!--
         <activity
-            android:name=".actv_detail.DetailWisataActivity"
+            android:name=".DetailWisataActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".actv_detail.DetailKamarActivity"
+            android:name=".DetailKamarActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".actv_detail.DetailPenginapanActivity"
+            android:name=".DetailPenginapanActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".actv_detail.DetailKulinerActivity"
+            android:name=".DetailKulinerActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        -->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -87,7 +85,7 @@
             android:label="@string/title_activity_map" />
         <activity
             android:name=".MapActivity2"
-            android:label="@string/title_activity_map2"></activity>
+            android:label="@string/title_activity_map2" />
     </application>
 
 </manifest>

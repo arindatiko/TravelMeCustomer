@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.DetailWisataActivity;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
 
+import static arindatiko.example.com.travelmecustomer.DetailWisataActivity.WISATA_ID;
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.MyViewHolder> {
@@ -65,14 +67,14 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.MyViewHold
             holder.tvAddress.setText("-");
         }
 
-        /*holder.cardItem.setOnClickListener(new View.OnClickListener() {
+        holder.cardItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailWisataActivity.class);
                 intent.putExtra(WISATA_ID, wisata.getId_wisata());
                 context.startActivity(intent);
             }
-        });*/
+        });
     }
 
     @Override

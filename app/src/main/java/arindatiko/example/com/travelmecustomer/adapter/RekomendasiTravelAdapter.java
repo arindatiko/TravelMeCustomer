@@ -27,10 +27,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.DetailWisataActivity;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
 
+import static arindatiko.example.com.travelmecustomer.DetailWisataActivity.WISATA_ID;
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTravelAdapter.MyViewHolder> {
@@ -87,20 +89,15 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
         holder.tvTime.setText(wisata.getJam_buka() +" wib - "+ wisata.getJam_tutup() +" wib");
         holder.imgCall.setVisibility(View.GONE);
 
-        /*holder.cardItem.setOnClickListener(new View.OnClickListener() {
+        holder.cardItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailWisataActivity.class);
                 intent.putExtra(WISATA_ID, wisata.getId_wisata());
                 context.startActivity(intent);
             }
-        });*/
+        });
 
-        /*String key = sharedPreferences.getString("key_wisata", "");
-        if(!key.equals("")) {
-            holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
-        }
-*/
         Glide.with(context)
                 .load(wisata.getFoto())
                 .into(holder.imgItem);

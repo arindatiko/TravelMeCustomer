@@ -14,8 +14,11 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import arindatiko.example.com.travelmecustomer.DetailKamarActivity;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Kamar;
+
+import static arindatiko.example.com.travelmecustomer.DetailKamarActivity.KAMAR_ID;
 
 public class KamarAdapter extends RecyclerView.Adapter<KamarAdapter.MyViewHolder> {
 
@@ -43,14 +46,14 @@ public class KamarAdapter extends RecyclerView.Adapter<KamarAdapter.MyViewHolder
 
         holder.tvTitle.setText(kamar.getNama());
         holder.tvPrice.setText("Rp "+ kamar.getHarga());
-        /*holder.cardItem.setOnClickListener(new View.OnClickListener() {
+        holder.cardItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailKamarActivity.class);
                 intent.putExtra(KAMAR_ID, kamar.getId_kamar());
                 context.startActivity(intent);
             }
-        });*/
+        });
     }
 
     @Override

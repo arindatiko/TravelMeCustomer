@@ -7,11 +7,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,13 +37,18 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import arindatiko.example.com.travelmecustomer.model.Drivers;
 import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
@@ -62,42 +70,54 @@ import static android.media.CamcorderProfile.get;
 public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback, DirectionCallback {
 
     private ArrayList<LatLng> dataMarker = new ArrayList<>();
-    private ArrayList<Wisata> wisata = new ArrayList<>();
-    private ArrayList<Kamar> kamar = new ArrayList<>();
-    private ArrayList<Menu> menu = new ArrayList<>();
-    //private ArrayList<LatLng> dataMarker = new ArrayList<>();
     private List<String> akses = new ArrayList<>();
     private List<Double> daftarJarak = new ArrayList<>();
     private List<LatLng> waypoint = new ArrayList<>();
     private ArrayList<Tujuan> tujuan = new ArrayList<>();
-    private ArrayList<Tujuan> tujuan1 = new ArrayList<>();
-//    private Tujuan tujuan;
-    private ArrayList<String> upload = new ArrayList<>();
-    //private ArrayList<ArrayList<Tujuan>> coba = new ArrayList<ArrayList<Tujuan>>();
 
     private GoogleMap mMap;
     private GPSTracker gps;
 
     private User user = new User();
     private Pesanan pesanan = new Pesanan();
+    private Drivers driver = new Drivers();
 
     private LatLng asal, destination;
     private int id_user;
-    private String id_pesanan;
+    private String id_pesanan, id_pesanan_customer, id_pesanan_driver, id;
     private double lat, lng;
     private Double total_km, jasa, biaya_tambahan, sisa_awal, biaya_transport, sisa_akhir, total_biaya;
+    private boolean stop = false;
+
+    private Handler handler = new Handler();
+    private final Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            getDataDriver();
+        }
+    };
+
 
     SharedPreferences sharedPreferences = null;
     SharedPreferences.Editor editor;
     SessionManager sessionManager;
     ProgressDialog progressDialog;
-
     DatabaseReference pesanan_db;
 
     @BindView(R.id.btnOrder)
     Button btnOrder;
     @BindView(R.id.txtNominal)
     TextView txtNominal;
+    @BindView(R.id.tv_Name)
+    TextView tvName;
+    @BindView(R.id.tv_NoTelp)
+    TextView tvNoTelp;
+    @BindView(R.id.tv_idpesanan)
+    TextView tvId;
+    @BindView(R.id.linear_button)
+    RelativeLayout linear;
+    @BindView(R.id.linear_btn)
+    LinearLayout linearBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,13 +139,14 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-
+                Log.d("error",t.getMessage());
             }
         });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -174,7 +195,6 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
                         createMarker(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng(),
                                 tujuan.get(i).getWisata().get(0).getNama());
                         akses.add(tujuan.get(i).getWisata().get(0).getAkses());
-                        //dataMarker.add(new LatLng(tujuan.get(i).getWisata().get(0).getPosisi_lat(), tujuan.get(i).getWisata().get(0).getPosisi_lng()));
                     }
                 }
 
@@ -373,6 +393,8 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
         total_biaya = Double.valueOf(total) - sisa_akhir;
 
         progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please Wait!");
+        progressDialog.setCancelable(false);
 
         API.service_post.send_pesanan(id_user,lat,lng,total_biaya).enqueue(new Callback<Pesanan>() {
             @Override
@@ -382,16 +404,19 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
                     id_pesanan = String.valueOf(pesanan.getId_pesanan());
 
                     pesanan_db = FirebaseDatabase.getInstance().getReference("pesanan");
+
                     pesanan_db.child(id_pesanan).setValue(pesanan);
-                    Log.d("id", pesanan_db.getKey());
+
+                    //Log.d("id", pesanan_db.getKey());
 
                     pesanan_db.child(id_pesanan).child("tujuan").setValue(tujuan);
                     pesanan_db.child(id_pesanan).child("user").setValue(user);
-                    //pesanan_db.child(String.valueOf(id_pesanan)).child("tujuan").setValue();
 
-                    //Toast.makeText(MapActivity2.this, pesanan.getUser().getNo_telp(), Toast.LENGTH_SHORT).show();
+                    id_pesanan_customer = pesanan_db.child(id_pesanan).getKey();
 
-                    progressDialog.setMessage("Please Wait!");
+                    Log.d("id", id_pesanan_customer);
+
+                    updateDriver();
                     progressDialog.show();
                 } else {
                     Toast.makeText(MapActivity2.this, "EROORRRRRRR", Toast.LENGTH_SHORT).show();
@@ -400,7 +425,92 @@ public class MapActivity2 extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onFailure(Call<Pesanan> call, Throwable t) {
-                Toast.makeText(MapActivity2.this, "EROORRRR22222", Toast.LENGTH_SHORT).show();
+                Log.d("error",t.getMessage());
+            }
+        });
+    }
+
+    private void sendData(String id_pesanan){
+        pesanan_db = FirebaseDatabase.getInstance().getReference("pesanan");
+        pesanan_db.child(id_pesanan).setValue(pesanan);
+        Log.d("id", pesanan_db.getKey());
+
+        pesanan_db.child(id_pesanan).child("tujuan").setValue(tujuan);
+        pesanan_db.child(id_pesanan).child("user").setValue(user);
+    }
+
+    private void getDataDriver() {
+        pesanan_db = FirebaseDatabase.getInstance().getReference().child("pesanan");
+
+        pesanan_db.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                id_pesanan_driver = dataSnapshot.getKey();
+                if(id_pesanan_driver.equals(id_pesanan_customer)){
+                    pesanan = dataSnapshot.getValue(Pesanan.class);
+                    Log.d("pesanan", String.valueOf(pesanan.getId_pesanan()));
+                    id = String.valueOf(pesanan.getId_pesanan());
+                    driver = dataSnapshot.child("driver").getValue(Drivers.class);
+
+                    try {
+                        if(pesanan.getStatus() == 1){
+                            String nama = driver.getNama_lengkap();
+                            Log.d("nama", nama);
+
+                            tvName.setText(driver.getNama_lengkap());
+                            tvNoTelp.setText(driver.getNo_telp());
+                            tvId.setText(id);
+                            Log.d("textview", "Suceess");
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(driver.getPosisi_lat(), driver.getPosisi_lng())));
+
+                            progressDialog.dismiss();
+                            linear.setVisibility(View.VISIBLE);
+                            linearBtn.setVisibility(View.GONE);
+                            stop = true;
+                            Log.d("try", String.valueOf(pesanan.getStatus()));
+                        }
+                    } catch (Exception e) {
+                        stop = false;
+                        Log.d("catch", e.toString());
+                    }
+                    
+                    if(stop){
+                        handler.removeCallbacks(runnable);
+                    }else{
+                        handler.postDelayed(runnable, 1000);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateDriver(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getDataDriver();
             }
         });
     }
