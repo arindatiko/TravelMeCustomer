@@ -34,6 +34,7 @@ import java.util.Locale;
 
 import arindatiko.example.com.travelmecustomer.DetailKulinerActivity;
 import arindatiko.example.com.travelmecustomer.R;
+import arindatiko.example.com.travelmecustomer.model.Kuliner;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 
@@ -43,7 +44,8 @@ import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME
 public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRestoAdapter.MyViewHolder> {
 
     private Context context;
-    private List<Menu> menus;
+    //private List<Menu> menus;
+    private List<Kuliner> kuliners;
     private MyChoice myChoice;
     private TextView tvMyBudget;
     private ProgressBar pbBudget;
@@ -51,13 +53,21 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-    private int jumPorsi = 0;
+    //private int jumPorsi = 0;
     private Double totalHarga = 0.0;
     private boolean click = false;
 
-    public RekomendasiRestoAdapter(Context context, List<Menu> menus, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
+    /*public RekomendasiRestoAdapter(Context context, List<Menu> menus, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
         this.menus = menus;
+        this.myChoice = myChoice;
+        this.tvMyBudget = tvMyBudget;
+        this.pbBudget = pbBudget;
+    }*/
+
+    public RekomendasiRestoAdapter(Context context, List<Kuliner> kuliners, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
+        this.context = context;
+        this.kuliners = kuliners;
         this.myChoice = myChoice;
         this.tvMyBudget = tvMyBudget;
         this.pbBudget = pbBudget;
@@ -72,15 +82,23 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-        final Menu menu = menus.get(position);
+        //final Menu menu = menus.get(position);
+        final Kuliner kuliner = kuliners.get(position);
+        final Double totalHarga = kuliner.getHarga_atas() * myChoice.getJumPorsi();
+
         sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        holder.tvTitle.setText(menu.getNama());
+        /*holder.tvTitle.setText(menu.getNama());
         holder.tvResto.setVisibility(View.VISIBLE);
         holder.tvResto.setText(menu.getKuliner().getNama());
         holder.tvDetailPrice.setText("Harga per porsi : Rp "+menu.getHarga());
-        holder.tvTime.setText(menu.getKuliner().getJam_buka() +" wib - "+ menu.getKuliner().getJam_tutup() +" wib");
+        holder.tvTime.setText(menu.getKuliner().getJam_buka() +" wib - "+ menu.getKuliner().getJam_tutup() +" wib");*/
+
+        holder.tvTitle.setText(kuliner.getNama());
+        //holder.tvResto.setText(menu.getKuliner().getNama());
+        holder.tvDetailPrice.setText("Harga tertinggi per porsi : Rp "+kuliner.getHarga_atas());
+        holder.tvTime.setText(kuliner.getJam_buka() +" wib - "+ kuliner.getJam_tutup() +" wib");
 
 //        holder.imgDrink.setImageResource(menu.getDrinks().get(0).getImage());
 //        holder.imgFood.setImageResource(menu.getFoods().get(0).getImage());
@@ -89,16 +107,16 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailKulinerActivity.class);
-                intent.putExtra(KULINER_ID, menu.getId_kuliner());
+                intent.putExtra(KULINER_ID, kuliner.getId_kuliner());
                 context.startActivity(intent);
             }
         });
 
-        holder.imgCheck.setOnClickListener(new View.OnClickListener() {
+       /* holder.imgCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.ln_porsi.setVisibility(View.VISIBLE);
-                holder.imgHide.setVisibility(View.VISIBLE);
+//                holder.ln_porsi.setVisibility(View.VISIBLE);
+//                holder.imgHide.setVisibility(View.VISIBLE);
 
                 if(sharedPreferences.getString("id_menu","").contains(","+String.valueOf(menu.getId_menu()))){
                     holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
@@ -120,9 +138,53 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                 Log.d("budget", String.valueOf(myChoice.getBudget()));
             }
 
+        });*/
+
+        holder.imgCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                SharedPreferences sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+
+                if(sharedPreferences.getString("id_menu","").contains(","+String.valueOf(kuliner.getId_kuliner()))){
+                    holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
+                    myChoice.setBudget(myChoice.getBudget()+totalHarga);
+
+                    String add_menu = sharedPreferences.getString("id_menu","");
+                    add_menu = add_menu.replace(","+String.valueOf(kuliner.getId_kuliner()),"");
+                    editor.putString("id_menu", String.valueOf(add_menu));
+                    editor.commit();
+                }
+                else {
+                    if (totalHarga>myChoice.getBudget()){
+                        Toast.makeText(context, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
+                        holder.tvPrice.setText("Rp "+totalHarga);
+
+                        myChoice.setBudget(myChoice.getBudget()-totalHarga);
+
+                        String add_menu = sharedPreferences.getString("id_menu","")+","+kuliner.getId_kuliner();
+                        editor.putString("id_menu", String.valueOf(add_menu));
+                        editor.commit();
+                    }
+                }
+                editor.putString("sisabudget", String.valueOf(myChoice.getBudget()));
+                editor.commit();
+
+                pbBudget.setProgress(myChoice.getBudget().intValue());
+                tvMyBudget.setText("Rp "+ myChoice.getBudget());
+
+                Log.d("selectedMenu",sharedPreferences.getString("id_menu",""));
+                Log.d("budget", String.valueOf(myChoice.getBudget()));
+            }
         });
 
-        holder.rvDone.setOnClickListener(new View.OnClickListener() {
+
+        /*holder.rvDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 click = true;
@@ -166,12 +228,12 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                     holder.ln_porsi.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        });*/
 
         holder.imgCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + menu.getKuliner().getNo_telp()));
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + kuliner.getNo_telp()));
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                     context.startActivity(intent);
                 }
@@ -179,12 +241,12 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
         });
 
         Glide.with(context)
-                .load(menu.getFoto())
+                .load(kuliner.getFoto())
                 .into(holder.imgItem);
 
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
-            List<Address> addresses = geocoder.getFromLocation(menu.getKuliner().getPosisi_lat(), menu.getKuliner().getPosisi_lng(), 1);
+            List<Address> addresses = geocoder.getFromLocation(kuliner.getPosisi_lat(), kuliner.getPosisi_lng(), 1);
 
             if (addresses.size() > 0) {
                 Address fetchedAddress = addresses.get(0);
@@ -201,7 +263,7 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
 
     @Override
     public int getItemCount() {
-        return menus.size();
+        return kuliners.size();
     }
 
 

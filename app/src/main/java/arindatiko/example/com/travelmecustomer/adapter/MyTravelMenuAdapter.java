@@ -20,15 +20,16 @@ import java.util.List;
 import java.util.Locale;
 
 import arindatiko.example.com.travelmecustomer.R;
+import arindatiko.example.com.travelmecustomer.model.Kuliner;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class MyTravelMenuAdapter extends RecyclerView.Adapter<MyTravelMenuAdapter.MyViewHolder> {
     private Context context;
-    private List<Menu> travels;
+    private List<Kuliner> travels;
 
-    public MyTravelMenuAdapter(Context context, List<Menu> travels) {
+    public MyTravelMenuAdapter(Context context, List<Kuliner> travels) {
         this.context = context;
         this.travels = travels;
     }
@@ -41,7 +42,7 @@ public class MyTravelMenuAdapter extends RecyclerView.Adapter<MyTravelMenuAdapte
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final Menu wisata = travels.get(position);
+        final Kuliner wisata = travels.get(position);
 
         holder.tvTitle.setText(wisata.getNama());
         holder.tvTime.setVisibility(View.GONE);
@@ -55,7 +56,7 @@ public class MyTravelMenuAdapter extends RecyclerView.Adapter<MyTravelMenuAdapte
 
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
-            List<Address> addresses = geocoder.getFromLocation(wisata.getKuliner().getPosisi_lat(), wisata.getKuliner().getPosisi_lng(), 1);
+            List<Address> addresses = geocoder.getFromLocation(wisata.getPosisi_lat(), wisata.getPosisi_lng(), 1);
 
             if (addresses.size() > 0) {
                 Address fetchedAddress = addresses.get(0);

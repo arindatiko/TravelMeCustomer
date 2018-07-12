@@ -174,7 +174,7 @@ public class LetsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //jumPorsi++;
                 ticketAdult++;
-                jumPorsi = ticketAdult * 3;
+                jumPorsi = jumPorsi + 3;
                 //temp = ticketAdult;
                 tvAdult.setText(String.valueOf(ticketAdult));
                 tvPorsi.setText(String.valueOf(jumPorsi));
@@ -360,9 +360,9 @@ public class LetsActivity extends AppCompatActivity {
                     Toast.makeText(LetsActivity.this, "Isi budget Anda.", Toast.LENGTH_SHORT).show();
                 } else if (categoryWisata.size() == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field wisata.", Toast.LENGTH_SHORT).show();
-                } /*else if (jumPorsi == 0) {
+                } else if (jumPorsi == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field kuliner.", Toast.LENGTH_SHORT).show();
-                }*/ else if (jumDay == 0 || jumKamar == 0) {
+                } else if (jumDay == 0 || jumKamar == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field penginapan.", Toast.LENGTH_SHORT).show();
                 } else {
                     MyChoice myChoice = new MyChoice(budget, categoryWisata, ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild, jumPorsi,jumKamar, jumDay);

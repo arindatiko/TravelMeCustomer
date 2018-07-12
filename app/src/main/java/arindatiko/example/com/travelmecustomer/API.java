@@ -77,7 +77,7 @@ public class API {
         );
         @FormUrlEncoded
         @POST("package_recomendation")
-        Call<ArrayList<Menu>> package_recomendation_menu(
+        Call<ArrayList<Kuliner>> package_recomendation_menu(
                 @Field("list_id_menu") String list_id_menu,
                 @Field("jenis_layanan") String jenis_layanan
         );
@@ -118,7 +118,7 @@ public class API {
 
         @FormUrlEncoded
         @POST("recomendation")
-        Call<ArrayList<Menu>> get_r_menu(
+        Call<ArrayList<Kuliner>> get_r_menu(
                 @Field("jenis_layanan") String jenis_layanan,
                 @Field("menu_porsi") int menu_porsi,
                 @Field("budget_menu") Double budget_menu
@@ -166,6 +166,15 @@ public class API {
                 @Field("id_tujuan") String id_tujuan,
                 @Field("jenis_layanan") String jenis_layanan
         );
+
+        @FormUrlEncoded
+        @POST("get_rekomendasi")
+        Call<ArrayList<Tujuan>> get_rekomendasi(
+                @Field("id_tujuan") String id_tujuan,
+                @Field("jenis_layanan") String jenis_layanan,
+                @Field("id_user") String id_user
+        );
+
         @FormUrlEncoded
         @POST("rekomendasi")
         Call<ArrayList<Wisata>> add_objek_wisata(
@@ -195,6 +204,16 @@ public class API {
         Call<Pesanan> send_pesanan(
                 @Field("id_customer") int id_customer,/*
                 @Field("id_driver") String id_driver,*/
+                @Field("posisi_lat") Double posisi_lat,
+                @Field("posisi_lng") Double posisi_lng,
+                @Field("total_budget") Double total_budget
+        );
+
+        @FormUrlEncoded
+        @POST("pesanan")
+        Call<Pesanan> get_pesanan(
+                @Field("id_customer") int id_customer,
+                @Field("id_driver") String id_driver,
                 @Field("posisi_lat") Double posisi_lat,
                 @Field("posisi_lng") Double posisi_lng,
                 @Field("total_budget") Double total_budget

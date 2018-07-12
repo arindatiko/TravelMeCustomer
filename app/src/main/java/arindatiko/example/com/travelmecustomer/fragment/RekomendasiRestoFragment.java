@@ -23,6 +23,7 @@ import arindatiko.example.com.travelmecustomer.API;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.RekomendasiActivity;
 import arindatiko.example.com.travelmecustomer.adapter.RekomendasiRestoAdapter;
+import arindatiko.example.com.travelmecustomer.model.Kuliner;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
 import retrofit2.Call;
@@ -34,6 +35,7 @@ public class RekomendasiRestoFragment extends Fragment {
 
     private RecyclerView rcRestaurant;
     private List<Menu> menus = new ArrayList<>();
+    private List<Kuliner> kuliners = new ArrayList<>();
 
     public RekomendasiRestoFragment() {
         // Required empty public constructor
@@ -77,12 +79,12 @@ public class RekomendasiRestoFragment extends Fragment {
                 "menu",
                 myChoice.getJumPorsi(),
                 myChoice.getBudget()
-        ).enqueue(new Callback<ArrayList<Menu>>() {
+        ).enqueue(new Callback<ArrayList<Kuliner>>() {
             @Override
-            public void onResponse(Call<ArrayList<Menu>> call, Response<ArrayList<Menu>> response) {
-                menus = response.body();
+            public void onResponse(Call<ArrayList<Kuliner>> call, Response<ArrayList<Kuliner>> response) {
+                kuliners = response.body();
 
-                rcRestaurant.setAdapter(new RekomendasiRestoAdapter(getContext(), menus, myChoice, tvMyBudget, pbBudget));
+                rcRestaurant.setAdapter(new RekomendasiRestoAdapter(getContext(), kuliners, myChoice, tvMyBudget, pbBudget));
                 rcRestaurant.getAdapter().notifyDataSetChanged();
 
                 progressDialog.dismiss();
@@ -90,7 +92,7 @@ public class RekomendasiRestoFragment extends Fragment {
 
             @SuppressLint("LongLogTag")
             @Override
-            public void onFailure(Call<ArrayList<Menu>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Kuliner>> call, Throwable t) {
                 Log.d(RERESTO_FRAG_TAG, t.getMessage());
             }
         });
