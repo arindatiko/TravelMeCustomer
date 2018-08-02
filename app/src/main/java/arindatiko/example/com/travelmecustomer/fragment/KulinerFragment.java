@@ -28,7 +28,7 @@ import arindatiko.example.com.travelmecustomer.model.Kuliner;
 public class KulinerFragment extends Fragment {
 
     private TextView tvTitle, tvAddress, tvDescription, tvTimeOpen, tvTimeClose, tvPhone,
-            tvTicketMotor, tvTicketCar, tvTicketBus, tvFacilities;
+            tvTicketMotor, tvTicketCar, tvTicketBus, tvFacilities, tvDate;
     private GoogleMap map;
     private SupportMapFragment mapFragment;
     private Kuliner kuliner;
@@ -56,6 +56,7 @@ public class KulinerFragment extends Fragment {
         tvTicketBus = (TextView) view.findViewById(R.id.tv_price_bus);
         tvFacilities = (TextView) view.findViewById(R.id.tv_facilities);
         tvPhone = (TextView) view.findViewById(R.id.tv_phone);
+        tvDate = (TextView) view.findViewById(R.id.tv_date);
 
         kuliner = ((DetailKulinerActivity) getActivity()).getKuliner();
 
@@ -84,6 +85,7 @@ public class KulinerFragment extends Fragment {
         tvTicketBus.setText("Rp "+ kuliner.getHarga_tiket_parkir_bus());
         tvFacilities.setText(kuliner.getFasilitas());
         tvPhone.setText(kuliner.getNo_telp());
+        tvDate.setText("Last Update: "+kuliner.getNo_telp());
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override

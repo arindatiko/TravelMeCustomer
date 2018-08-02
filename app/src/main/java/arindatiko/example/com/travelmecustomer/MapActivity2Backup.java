@@ -27,6 +27,7 @@ import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -59,6 +60,8 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.media.CamcorderProfile.get;
 
 public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCallback, DirectionCallback {
 
@@ -119,12 +122,13 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
         ButterKnife.bind(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
-        sharedPreferences = getApplicationContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);;
+        sharedPreferences = getApplicationContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
         sessionManager = new SessionManager(this);
         id_user = Integer.parseInt(sessionManager.getId());
 
-        API.service_post.get_user(id_user).enqueue(new Callback<User>() {
+       /* API.service_post.get_user(id_user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 user = response.body();
@@ -134,7 +138,7 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
             public void onFailure(Call<User> call, Throwable t) {
                 Log.d("error",t.getMessage());
             }
-        });
+        });*/
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -174,11 +178,8 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
         Log.d("id", id_kamar);
         Log.d("id", id_menu);
 
-        waterFallGetApi(id_wisata, id_kamar, id_menu);
-    }
-
-    private void waterFallGetApi(final String idWisata, final String idKamar, final String idMenu){
-        API.service_post.add_objek(id_user,idWisata, "wisata").enqueue(new Callback<ArrayList<Tujuan>>() {
+        //waterFallGetApi(id_wisata, id_kamar, id_menu);
+        API.service_post.add_objek(id_user,id_wisata, "wisata").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan.addAll(response.body());
@@ -191,9 +192,9 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
                     }
                 }
 
-                waterFallGetApiPhraseOne(response.body(), idKamar, idMenu);
-                Log.d("wisata",response.body().toString());
-                Log.d("idWisata",idWisata);
+                //waterFallGetApiPhraseOne(response.body(), idKamar, idMenu);
+                //Log.d("wisata",response.body().toString());
+                //Log.d("idWisata",idWisata);
             }
 
             @Override
@@ -201,10 +202,7 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
                 Log.d("error",t.getMessage());
             }
         });
-    }
-
-    private void waterFallGetApiPhraseOne(final ArrayList<Tujuan> dataWisata, final String idKamar, final String idMenu){
-        API.service_post.add_objek(id_user, idKamar, "kamar").enqueue(new Callback<ArrayList<Tujuan>>() {
+        API.service_post.add_objek(id_user, id_kamar, "kamar").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan.addAll(response.body());
@@ -217,18 +215,14 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
                     }
                 }
 
-                waterFallGetApiPhraseTwo(dataWisata, response.body(), idMenu);
+                //waterFallGetApiPhraseTwo(dataWisata, response.body(), idMenu);
             }
             @Override
             public void onFailure(Call<ArrayList<Tujuan>> call, Throwable t) {
                 Log.d("error",t.getMessage());
             }
         });
-    }
-
-    private void waterFallGetApiPhraseTwo(final ArrayList<Tujuan> dataWisata, final ArrayList<Tujuan> dataKamar, final String idMenu){
-        Log.d("id", idMenu);
-        API.service_post.add_objek(id_user, idMenu, "menu").enqueue(new Callback<ArrayList<Tujuan>>() {
+        API.service_post.add_objek(id_user, id_menu, "menu").enqueue(new Callback<ArrayList<Tujuan>>() {
             @Override
             public void onResponse(Call<ArrayList<Tujuan>> call, Response<ArrayList<Tujuan>> response) {
                 tujuan.addAll(response.body());
@@ -236,7 +230,7 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
                 for (int i = 0; i < tujuan.size(); i++) {
                     if(tujuan.get(i).getJenis_layanan().equals("menu")) {
                         createMarker(tujuan.get(i).getKuliner().get(0).getPosisi_lat(), tujuan.get(i).getKuliner().get(0).getPosisi_lng(),
-                               tujuan.get(i).getKuliner().get(0).getNama());
+                                tujuan.get(i).getKuliner().get(0).getNama());
                         akses.add(tujuan.get(i).getKuliner().get(0).getAkses());
 //                        createMarker(tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lat(), tujuan.get(i).getMenu().get(0).getKuliner().getPosisi_lng(),
 //                                tujuan.get(i).getMenu().get(0).getKuliner().getNama());
@@ -244,8 +238,8 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
                     }
                 }
 
-                Log.d("menu",response.body().toString());
-                Log.d("idMenu",idMenu);
+                //Log.d("menu",response.body().toString());
+               // Log.d("idMenu",idMenu);
 
                 //draw marker all
                 for (int i = 0; i < tujuan.size(); i++) {
@@ -324,6 +318,19 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
 
             }
         });
+    }
+
+    private void waterFallGetApi(final String idWisata, final String idKamar, final String idMenu){
+
+    }
+
+    private void waterFallGetApiPhraseOne(final ArrayList<Tujuan> dataWisata, final String idKamar, final String idMenu){
+
+    }
+
+    private void waterFallGetApiPhraseTwo(final ArrayList<Tujuan> dataWisata, final ArrayList<Tujuan> dataKamar, final String idMenu){
+        Log.d("id", idMenu);
+
     }
 
     protected Marker createMarker(double latitude, double longitude, String title){
@@ -448,10 +455,10 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
                     id = String.valueOf(pesanan.getId_pesanan());
                     driver = dataSnapshot.child("driver").getValue(Drivers.class);
 
-                    /*Intent intent = new Intent(MapActivity2.this, MyTravelFragment.class);
+
+                    /*Intent intent = new Intent(MapActivity2Backup.this, MyTravelFragment.class);
                     intent.putExtra("pesanan", String.valueOf(pesanan));
                     intent.putExtra("driver", String.valueOf(driver));*/
-
 
                     try {
                         if(pesanan.getStatus() == 1){
@@ -464,6 +471,11 @@ public class MapActivity2Backup extends FragmentActivity implements OnMapReadyCa
                             Log.d("textview", "Suceess");
                             mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(driver.getPosisi_lat(), driver.getPosisi_lng())));
+
+                            editor.putString("name_driver", String.valueOf(driver.getNama_lengkap()));
+                            editor.putString("notelp_driver", String.valueOf(driver.getNo_telp()));
+                            editor.putString("id_pesanan", String.valueOf(pesanan.getId_pesanan()));
+                            editor.commit();
 
                             progressDialog.dismiss();
                             linear.setVisibility(View.VISIBLE);

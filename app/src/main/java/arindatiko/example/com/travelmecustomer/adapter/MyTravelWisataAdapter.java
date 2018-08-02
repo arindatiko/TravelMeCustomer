@@ -16,21 +16,37 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.API;
 import arindatiko.example.com.travelmecustomer.R;
+import arindatiko.example.com.travelmecustomer.model.Rekomendasi;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class MyTravelWisataAdapter extends RecyclerView.Adapter<MyTravelWisataAdapter.MyViewHolder> {
     private Context context;
-    private List<Wisata> travels;
+    private ArrayList<Wisata> travels = new ArrayList<>();
+    private ArrayList<Rekomendasi> rekomendasis;
 
-    public MyTravelWisataAdapter(Context context, List<Wisata> travels) {
+    /*public MyTravelWisataAdapter(Context context, ArrayList<Wisata> travels) {
         this.context = context;
         this.travels = travels;
+    }*/
+
+
+    public MyTravelWisataAdapter(Context context, ArrayList<Rekomendasi> rekomendasis) {
+        this.context = context;
+        this.rekomendasis = rekomendasis;
+        for (int i = 0; i < rekomendasis.size(); i++) {
+            travels.add(rekomendasis.get(i).getWisata().get(0));
+        }
     }
 
     @Override
@@ -47,6 +63,25 @@ public class MyTravelWisataAdapter extends RecyclerView.Adapter<MyTravelWisataAd
         holder.tvTime.setVisibility(View.GONE);
         holder.imgCall.setVisibility(View.GONE);
         holder.lnHarga.setVisibility(View.GONE);
+
+        API.service_post.get_rekomendasi_2(rekomendasis.get(position).getId_rekomendasi(),
+                "wisata",
+                rekomendasis.get(position).getWisata().get(0).getId_wisata()).enqueue(new Callback<Rekomendasi>() {
+            @Override
+            public void onResponse(Call<Rekomendasi> call, Response<Rekomendasi> response) {
+                Rekomendasi r = response.body();
+                if(r.getFlag() == 1){
+                    holder.lnSelesai.setVisibility(View.VISIBLE);
+                }else{
+                    holder.lnSelesai.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Rekomendasi> call, Throwable t) {
+
+            }
+        });
 
         Glide.with(context)
                 .load(wisata.getFoto())
@@ -78,9 +113,10 @@ public class MyTravelWisataAdapter extends RecyclerView.Adapter<MyTravelWisataAd
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private CardView cardItem;
-        private ImageView imgItem, imgCall, imgCheck;
-        private TextView tvTitle, tvAddress, tvPrice, tvDetailPrice, tvTime;
-        private LinearLayout lnItem, lnHarga;
+        private ImageView imgItem, imgCall, imgCheck, imgSelesai;
+        private TextView tvTitle, tvAddress, tvPrice, tvDetailPrice, tvTime, tvSelesai;
+        private LinearLayout lnItem, lnHarga, lnSelesai;
+
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -90,12 +126,15 @@ public class MyTravelWisataAdapter extends RecyclerView.Adapter<MyTravelWisataAd
             imgItem = (ImageView) itemView.findViewById(R.id.img_item);
             imgCall = (ImageView) itemView.findViewById(R.id.img_call);
             imgCheck = (ImageView) itemView.findViewById(R.id.img_check);
+            imgSelesai = (ImageView) itemView.findViewById(R.id.check);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
             tvAddress = (TextView) itemView.findViewById(R.id.tv_address);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_price);
             tvDetailPrice = (TextView) itemView.findViewById(R.id.tv_detail_price);
+            tvSelesai = (TextView) itemView.findViewById(R.id.tv_done);
             tvTime = (TextView) itemView.findViewById(R.id.tv_time);
             lnItem = (LinearLayout) itemView.findViewById(R.id.ln_item);
+            lnSelesai = (LinearLayout) itemView.findViewById(R.id.ln_selesai);
         }
     }
 }

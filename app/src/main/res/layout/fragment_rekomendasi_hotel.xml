@@ -16,7 +16,8 @@
             android:src="@drawable/ic_circle_gradient"
             android:layout_alignParentRight="true"
             android:layout_marginRight="-172dp"
-            android:layout_marginTop="-36dp"/>
+            android:layout_marginTop="-36dp"
+            android:id="@+id/img"/>
 
         <ImageView
             android:id="@+id/img_lets"
@@ -39,15 +40,43 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="67dp"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:id="@+id/rv_spinner">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Urut Berdasarkan: "
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:id="@+id/txt"
+                android:layout_centerVertical="true"
+                android:lineSpacingExtra="6dp"
+                android:fontFamily="@font/comfortaa"/>
+
+            <Spinner
+                android:layout_toRightOf="@+id/txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:gravity="center_vertical"
+                android:id="@+id/spinner_sort"
+                android:spinnerMode="dropdown" />
+        </RelativeLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rc_hotel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/img_lets"
+            android:layout_below="@+id/rv_spinner"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="29.7dp"/>
+            android:layout_marginBottom="20dp"/>
 
     </RelativeLayout>
 

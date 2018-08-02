@@ -1,5 +1,6 @@
 package arindatiko.example.com.travelmecustomer;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +8,11 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.content.res.AppCompatResources;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -21,7 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.archit.calendardaterangepicker.customviews.DateRangeCalendarView;
+//import com.archit.calendardaterangepicker.customviews.DateRangeCalendarView;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -36,6 +40,7 @@ import arindatiko.example.com.travelmecustomer.model.MyChoice;
 public class LetsActivity extends AppCompatActivity {
     public static final String MYCHOICE = "MYCHOICE";
 
+    private Context context;
     private EditText etBudget;
     private TextView tvCatAlam, tvCatBuatan, tvMotor, tvCar, tvBus, tvAdult, tvChild, tvPorsi,
             tvKamar, tvDay, tvTanggalMulai, tvTanggalSelesai;
@@ -45,7 +50,7 @@ public class LetsActivity extends AppCompatActivity {
     private RelativeLayout rvTravelling, rvMotorMin, rvMotorPlus, rvCarMin, rvCarPlus, rvBusMin,
             rvBusPlus, rvAdultMin, rvAdultPlus, rvChildMin, rvChildPlus, rvPorsiMin, rvPorsiPlus,
             rvKamarMin, rvKamarPlus, rvDayMin, rvDayPlus, rvTanggalMulai, rvTanggalSelesai;
-    private DateRangeCalendarView vCalendar;
+    //private DateRangeCalendarView vCalendar;
 
     private Double budget = 0.0;
     private List<String> categoryWisata = new ArrayList<>();
@@ -251,35 +256,17 @@ public class LetsActivity extends AppCompatActivity {
             }
         });
 
-        rvTanggalMulai.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-
-                final DatePickerDialog datePickerDialog = new DatePickerDialog(LetsActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
-
-                        tvTanggalMulai.setText(dayOfMonth + "-" + mMonth + "-" + year);
-                    }
-                }, mYear, mMonth, mDay);
-
-                datePickerDialog.show();
-            }
-        });
-
         lnCatAlam.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
             @Override
             public void onClick(View view) {
                 if (!categoryWisata.contains("alam")) {
                     categoryWisata.add("alam");
                     lnCatAlam.setBackgroundResource(R.drawable.ic_reg_gradient);
                     tvCatAlam.setTextColor(Color.parseColor("#FFFFFF"));
-                    imgCatAlam.setImageTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                    ColorStateList cs = AppCompatResources.getColorStateList(LetsActivity.this, R.color.colorWhite);
+                    ImageViewCompat.setImageTintList(imgCatAlam, cs);
+                    //    imgCatAlam.setImageTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
                 } else {
                     categoryWisata.remove("alam");
                     lnCatAlam.setBackgroundResource(R.drawable.ic_reg_white);
@@ -290,6 +277,7 @@ public class LetsActivity extends AppCompatActivity {
         });
 
         lnCatBuatan.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
             @Override
             public void onClick(View view) {
                 if (!categoryWisata.contains("buatan")) {
@@ -346,7 +334,6 @@ public class LetsActivity extends AppCompatActivity {
             }
         });
 
-        //etBudget.addTextChangedListener(onTextChangedListener());
         rvTravelling.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -356,7 +343,66 @@ public class LetsActivity extends AppCompatActivity {
                     budget = 0.0;
                 }
 
-                if (budget == 0) {
+                if(budget == 0){
+                    Toast.makeText(LetsActivity.this, "Isi Budget Anda.", Toast.LENGTH_SHORT).show();
+                }else if(categoryWisata.size() == 0){
+                    //wisata kosong
+                    MyChoice myChoice = new MyChoice(budget, jumPorsi, jumKamar, jumDay);
+
+                    Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
+                    intent.putExtra(MYCHOICE, myChoice);
+                    startActivity(intent);
+                    finish();
+                }else if(jumPorsi == 0){
+                    //resto kosong
+                    MyChoice myChoice = new MyChoice(budget, categoryWisata, ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild,jumKamar, jumDay);
+
+                    Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
+                    intent.putExtra(MYCHOICE, myChoice);
+                    startActivity(intent);
+                    finish();
+                }else if(jumDay == 0 || jumKamar == 0){
+                    //hotel kosong
+                    MyChoice myChoice = new MyChoice(budget, categoryWisata, ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild, jumPorsi);
+
+                    Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
+                    intent.putExtra(MYCHOICE, myChoice);
+                    startActivity(intent);
+                    finish();
+                }else if(jumPorsi == 0 && jumKamar == 0 && jumDay == 0){
+                    //resto dan hotel kosong
+                    MyChoice myChoice = new MyChoice(budget, categoryWisata, ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild);
+
+                    Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
+                    intent.putExtra(MYCHOICE, myChoice);
+                    startActivity(intent);
+                    finish();
+                }else if(jumDay == 0 && jumKamar == 0 && categoryWisata.size() == 0){
+                    //hotel dan wisata kosong
+                    MyChoice myChoice = new MyChoice(budget, jumPorsi);
+
+                    Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
+                    intent.putExtra(MYCHOICE, myChoice);
+                    startActivity(intent);
+                    finish();
+                }else if(jumPorsi == 0 && categoryWisata.size() == 0){
+                    //resto dan wisata kosong
+                    MyChoice myChoice = new MyChoice(budget, jumKamar, jumDay);
+
+                    Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
+                    intent.putExtra(MYCHOICE, myChoice);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    MyChoice myChoice = new MyChoice(budget, categoryWisata, ticketMotor, ticketCar, ticketBus, ticketAdult, ticketChild, jumPorsi,jumKamar, jumDay);
+
+                    Intent intent = new Intent(LetsActivity.this, RekomendasiActivity.class);
+                    intent.putExtra(MYCHOICE, myChoice);
+                    startActivity(intent);
+                    finish();
+                }
+
+                /*if (budget == 0) {
                     Toast.makeText(LetsActivity.this, "Isi budget Anda.", Toast.LENGTH_SHORT).show();
                 } else if (categoryWisata.size() == 0) {
                     Toast.makeText(LetsActivity.this, "Isi semua field wisata.", Toast.LENGTH_SHORT).show();
@@ -372,7 +418,7 @@ public class LetsActivity extends AppCompatActivity {
                     intent.putExtra(MYCHOICE, myChoice);
                     startActivity(intent);
                     finish();
-                }
+                }*/
             }
         });
     }

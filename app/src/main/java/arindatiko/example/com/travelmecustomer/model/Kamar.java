@@ -1,5 +1,7 @@
 package arindatiko.example.com.travelmecustomer.model;
 
+import java.util.List;
+
 public class Kamar {
     private int id_kamar;
     private int id_penginapan;
@@ -9,12 +11,16 @@ public class Kamar {
     private String fasilitas;
     private Double harga;
     private String foto;
+    private String last_update;
     private Penginapan penginapan;
+
+    private Double totalHarga;
 
     public Kamar() {
     }
 
-    public Kamar(int id_kamar, int id_penginapan, String nama, int banyak_kamar, int kapasitas, String fasilitas, Double harga, String foto) {
+
+    public Kamar(int id_kamar, int id_penginapan, String nama, int banyak_kamar, int kapasitas, String fasilitas, Double harga, String foto, String last_update) {
         this.id_kamar = id_kamar;
         this.id_penginapan = id_penginapan;
         this.nama = nama;
@@ -23,6 +29,28 @@ public class Kamar {
         this.fasilitas = fasilitas;
         this.harga = harga;
         this.foto = foto;
+        this.last_update = last_update;
+    }
+
+    public Kamar(String nama, String fasilitas) {
+        this.nama = nama;
+        this.fasilitas = fasilitas;
+    }
+
+    public String getLast_update() {
+        return last_update;
+    }
+
+    public void setLast_update(String last_update) {
+        this.last_update = last_update;
+    }
+
+    public Double getTotalHarga() {
+        return totalHarga;
+    }
+
+    public void setTotalHarga(Double totalHarga) {
+        this.totalHarga = totalHarga;
     }
 
     public int getId_kamar() {

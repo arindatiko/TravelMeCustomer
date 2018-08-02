@@ -2,9 +2,17 @@ package arindatiko.example.com.travelmecustomer.model;
 
 public class User {
     private String nama_lengkap, alamat, no_telp, username, password, user_type, Token;
-    private int id_user;
+    private int id_user, flag;
 
     public User() {
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 
     public String getNama_lengkap() {

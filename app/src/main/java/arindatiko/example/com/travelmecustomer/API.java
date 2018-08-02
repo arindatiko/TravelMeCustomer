@@ -7,6 +7,7 @@ import arindatiko.example.com.travelmecustomer.model.Kuliner;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.Penginapan;
 import arindatiko.example.com.travelmecustomer.model.Pesanan;
+import arindatiko.example.com.travelmecustomer.model.Rekomendasi;
 import arindatiko.example.com.travelmecustomer.model.Tujuan;
 import arindatiko.example.com.travelmecustomer.model.User;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
@@ -23,7 +24,6 @@ public class API {
     //public static String BASE_URL = "http://192.168.43.47/travel_me/index.php/Api/";
     //public static String BASE_URL = "http://ichoarinda.000webhostapp.com/travel_me/index.php/Api/";
     public static String BASE_URL = "http://arinda.jagopesan.com/travel_me/index.php/Api/";
-
 
     public static PostService service_post = new Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -59,7 +59,19 @@ public class API {
         @FormUrlEncoded
         @POST("user")
         Call<User> get_user(
-                @Field("id_user") int id_user
+                @Field("id_user") String id_user
+        );
+
+        @FormUrlEncoded
+        @POST("update_profil")
+        Call<User> edit_profil(
+            @Field("id_user") String id_user,
+            @Field("nama_lengkap") String nama_lengkap,
+            @Field("username") String username,
+            @Field("password") String password,
+            @Field("user_type") String user_type,
+            @Field("no_telp") String no_telp,
+            @Field("flag") int flag
         );
 
         @FormUrlEncoded
@@ -169,10 +181,34 @@ public class API {
 
         @FormUrlEncoded
         @POST("get_rekomendasi")
-        Call<ArrayList<Tujuan>> get_rekomendasi(
-                @Field("id_tujuan") String id_tujuan,
+        Call<ArrayList<Rekomendasi>> get_rekomendasi_wisata(
+                @Field("id_pesanan") String id_pesanan,
                 @Field("jenis_layanan") String jenis_layanan,
-                @Field("id_user") String id_user
+                @Field("id_tujuan") String id_tujuan
+        );
+
+        @FormUrlEncoded
+        @POST("get_rekomendasi")
+        Call<ArrayList<Rekomendasi>> get_rekomendasi_kamar(
+                @Field("id_pesanan") String id_pesanan,
+                @Field("jenis_layanan") String jenis_layanan,
+                @Field("id_tujuan") String id_tujuan
+        );
+
+        @FormUrlEncoded
+        @POST("get_rekomendasi")
+        Call<ArrayList<Rekomendasi>> get_rekomendasi_kuliner(
+                @Field("id_pesanan") String id_pesanan,
+                @Field("jenis_layanan") String jenis_layanan,
+                @Field("id_tujuan") String id_tujuan
+        );
+
+        @FormUrlEncoded
+        @POST("get_rekomendasi")
+        Call<Rekomendasi> get_rekomendasi_2(
+                @Field("id_pesanan") String id_pesanan,
+                @Field("jenis_layanan") String jenis_layanan,
+                @Field("id_tujuan") int id_tujuan
         );
 
         @FormUrlEncoded
@@ -217,6 +253,32 @@ public class API {
                 @Field("posisi_lat") Double posisi_lat,
                 @Field("posisi_lng") Double posisi_lng,
                 @Field("total_budget") Double total_budget
+        );
+
+        @FormUrlEncoded
+        @POST("kamar_update")
+        Call<Kamar> update_kamar(
+                @Field("id_kamar") int id_kamar,
+                @Field("id_penginapan") int id_penginapan,
+                @Field("nama") String nama,
+                @Field("banyak_kamar") int banyak_kamar,
+                @Field("kapasitas") int kapasitas,
+                @Field("fasilitas") String fasilitas,
+                @Field("harga") Double harga,
+                @Field("foto") String foto
+        );
+
+        @FormUrlEncoded
+        @POST("history_pesanan_cust")
+        Call<ArrayList<Pesanan>> history_pesanan(
+                @Field("id_customer") String id_customer
+        );
+
+        @FormUrlEncoded
+        @POST("update")
+        Call<ArrayList<Rekomendasi>> update_pesanan(
+                @Field("id_pesanan") String id_pesanan,
+                @Field("id_user") String id_user
         );
     }
 

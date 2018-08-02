@@ -35,7 +35,7 @@ public class DetailWisataActivity extends AppCompatActivity {
 
     private ImageView imgDetail;
     private TextView tvTitle, tvAddress, tvDescription, tvTimeOpen, tvTimeClose, tvTicketAdult,
-            tvTicketChild, tvTicketMotor, tvTicketCar, tvTicketBus, tvFacilities;
+            tvTicketChild, tvTicketMotor, tvTicketCar, tvTicketBus, tvFacilities, tvDate;
     private GoogleMap map;
     private SupportMapFragment mapFragment;
 
@@ -65,6 +65,8 @@ public class DetailWisataActivity extends AppCompatActivity {
         tvTicketCar = (TextView) findViewById(R.id.tv_price_car);
         tvTicketBus = (TextView) findViewById(R.id.tv_price_bus);
         tvFacilities = (TextView) findViewById(R.id.tv_facilities);
+        tvFacilities = (TextView) findViewById(R.id.tv_facilities);
+        tvDate = (TextView) findViewById(R.id.tv_date);
 
         loadWisataData();
     }
@@ -121,6 +123,7 @@ public class DetailWisataActivity extends AppCompatActivity {
         tvTicketCar.setText("Rp "+ wisata.getBiaya_parkir_mobil());
         tvTicketBus.setText("Rp "+ wisata.getBiaya_parkir_bus());
         tvFacilities.setText(wisata.getFasilitas());
+        tvDate.setText("Last Update: "+wisata.getLast_update());
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override

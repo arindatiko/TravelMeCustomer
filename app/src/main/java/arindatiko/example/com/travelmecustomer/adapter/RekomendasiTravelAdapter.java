@@ -24,6 +24,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,7 +48,15 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-    private int choose = 0;
+    public void replaceData(List<Wisata> data) {
+        this.travels = data;
+
+        for (int i = 0; i < travels.size(); i++) {
+            Double totalHarga = myChoice.getTicketMotor() * travels.get(i).getBiaya_parkir_motor() + myChoice.getTicketCar() * travels.get(i).getBiaya_parkir_mobil() + myChoice.getTicketBus() * travels.get(i).getBiaya_parkir_bus() + myChoice.getTicketAdult() * travels.get(i).getTiket_masuk_dewasa() + myChoice.getTicketChild() * travels.get(i).getTiket_masuk_anak();
+
+            travels.get(i).setTotalHarga(totalHarga);
+        }
+    }
 
     public RekomendasiTravelAdapter(Context context, List<Wisata> travels, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
@@ -54,10 +65,6 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
         this.tvMyBudget = tvMyBudget;
         this.pbBudget = pbBudget;
 
-        sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        editor.putString("totalbudget", String.valueOf(myChoice.getBudget()));
-        editor.commit();
     }
 
     @Override
@@ -69,8 +76,11 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Wisata wisata = travels.get(position);
+        /*totalHarga = myChoice.getTicketMotor() * wisata.getBiaya_parkir_motor() + myChoice.getTicketCar() * wisata.getBiaya_parkir_mobil() + myChoice.getTicketBus() * wisata.getBiaya_parkir_bus() + myChoice.getTicketAdult() * wisata.getTiket_masuk_dewasa() + myChoice.getTicketChild() * wisata.getTiket_masuk_anak();
 
-        final Double totalHarga = myChoice.getTicketMotor() * wisata.getBiaya_parkir_motor() + myChoice.getTicketCar() * wisata.getBiaya_parkir_mobil() + myChoice.getTicketBus() * wisata.getBiaya_parkir_bus() + myChoice.getTicketAdult() * wisata.getTiket_masuk_dewasa() + myChoice.getTicketChild() * wisata.getTiket_masuk_anak();
+        wisata.setTotalHarga(totalHarga);*/
+
+        Log.d("coba", wisata.getTotalHarga().toString());
 
         String detailPrice = null;
         if (myChoice.getTicketAdult() != 0) { detailPrice = "Tiket dewasa : "+ wisata.getTiket_masuk_dewasa().toString() +" x "+ myChoice.getTicketAdult() +" = "+ myChoice.getTicketAdult() * wisata.getTiket_masuk_dewasa(); }
@@ -84,7 +94,7 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
         if (myChoice.getTicketBus() != 0) { detailPrice +="\nParkir bus : "+ wisata.getBiaya_parkir_bus() +" x "+ myChoice.getTicketBus() +" = "+ myChoice.getTicketBus() * wisata.getBiaya_parkir_bus(); }
 
         holder.tvTitle.setText(wisata.getNama());
-        holder.tvPrice.setText("Rp "+ totalHarga.toString());
+        holder.tvPrice.setText("Rp "+ wisata.getTotalHarga().toString());
         holder.tvDetailPrice.setText(detailPrice);
         holder.tvTime.setText(wisata.getJam_buka() +" wib - "+ wisata.getJam_tutup() +" wib");
         holder.imgCall.setVisibility(View.GONE);
@@ -126,10 +136,9 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
                 editor = sharedPreferences.edit();
 
                 if(sharedPreferences.getString("id_wisata","").contains(","+String.valueOf(wisata.getId_wisata()))){
-                    choose = 0;
                     holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
 
-                    myChoice.setBudget(myChoice.getBudget()+totalHarga);
+                    myChoice.setBudget(myChoice.getBudget()+wisata.getTotalHarga());
 
                     //tampung total
                     //myChoice.setTotalBiaya(totalHarga);
@@ -140,13 +149,13 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
                     editor.commit();
                 }
                 else {
-                    if (totalHarga>myChoice.getBudget()){
+                    if (wisata.getTotalHarga()>myChoice.getBudget()){
                         Toast.makeText(context, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
 
-                        myChoice.setBudget(myChoice.getBudget() - totalHarga);
+                        myChoice.setBudget(myChoice.getBudget() - wisata.getTotalHarga());
 
                         String add_wisata = sharedPreferences.getString("id_wisata", "") + "," + wisata.getId_wisata();
                         editor.putString("id_wisata", String.valueOf(add_wisata));
@@ -169,6 +178,16 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
         return travels.size();
     }
 
+    public void updateWisataList(List<Wisata> travels){
+        Collections.sort(travels, new Comparator<Wisata>() {
+            @Override
+            public int compare(Wisata o1, Wisata o2) {
+                return (int) (o1.getTotalHarga() - o2.getTotalHarga());
+
+            }
+        });
+        this.notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -192,4 +211,5 @@ public class RekomendasiTravelAdapter extends RecyclerView.Adapter<RekomendasiTr
             lnItem = (LinearLayout) itemView.findViewById(R.id.ln_item);
         }
     }
+
 }

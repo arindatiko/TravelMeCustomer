@@ -1,11 +1,8 @@
 package arindatiko.example.com.travelmecustomer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +28,8 @@ public class RekomendasiActivity extends AppCompatActivity {
     public static final String TRAVEL = "TRAVEL";
     public static final String HOTEL = "HOTEL";
     public static final String RESTAURANT = "RESTAURANT";
-    public static String currentFragment = TRAVEL;
+    //public static String currentFragment = TRAVEL;
+    public static String currentFragment = null;
 
     public static MyChoice myChoice = new MyChoice();
     SharedPreferences sharedPreferences = null;
@@ -64,45 +62,31 @@ public class RekomendasiActivity extends AppCompatActivity {
         tvTotalBudget.setText("Rp "+ myChoice.getBudget());
 
         rvNext = (RelativeLayout) findViewById(R.id.rv_next);
-        /*rvNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch (currentFragment) {
-                    case TRAVEL:
-                        loadFragment(new RekomendasiHotelFragment());
-                        currentFragment = HOTEL;
-                        break;
-                    case HOTEL:
-                        loadFragment(new RekomendasiRestoFragment());
-                        currentFragment = RESTAURANT;
-                        break;
-                    case RESTAURANT:
-                        Intent intent = new Intent(RekomendasiActivity.this, MapActivity2.class);
-                        intent.putExtra("myChoice", myChoice);
-                        intent.putExtra("budget", String.valueOf(tvMyBudget));
-                        intent.putExtra("progressBar", String.valueOf(pbBudget));
-                        startActivity(intent);
-                        finish();
-                        break;
-                }
-            }
-        });*/
 
         rvNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(currentFragment == TRAVEL){
                     String id_wisata = sharedPreferences.getString("id_wisata", "");
-                   /* String add_key_wisata = sharedPreferences.getString("key_wisata", "") + 1;
-
-                    editor.putString("key_wisata", String.valueOf(add_key_wisata));
-                    editor.commit();*/
-
                     if(id_wisata.equals("")){
                         Toast.makeText(RekomendasiActivity.this, "Harap Pilih Tempat Wisata Terlebih Dahulu", Toast.LENGTH_SHORT).show();
                     }else{
-                        loadFragment(new RekomendasiHotelFragment());
-                        currentFragment = HOTEL;
+                        if(myChoice.getJumKamar() != 0 && myChoice.getJumDay() != 0) {
+                            loadFragment(new RekomendasiHotelFragment());
+                            currentFragment = HOTEL;
+                        }else if(myChoice.getJumPorsi() != 0){
+                            loadFragment(new RekomendasiRestoFragment());
+                            currentFragment = RESTAURANT;
+                        }else{
+                            Intent intent = new Intent(RekomendasiActivity.this, MapActivity2.class);
+                            intent.putExtra("myChoice", myChoice);
+                            intent.putExtra("budget", String.valueOf(tvMyBudget));
+                            intent.putExtra("progressBar", String.valueOf(pbBudget));
+                            intent.putExtra("totalbudget", String.valueOf(myChoice.getBudget()));
+                            startActivity(intent);
+                            finish();
+                        }
+
                     }
                 }else if (currentFragment == HOTEL){
                     String id_kamar = sharedPreferences.getString("id_kamar", "");
@@ -110,8 +94,18 @@ public class RekomendasiActivity extends AppCompatActivity {
                     if(id_kamar.equals("")){
                         Toast.makeText(RekomendasiActivity.this, "Harap Pilih Kamar Penginapan Terlebuh Dahulu", Toast.LENGTH_SHORT).show();
                     }else{
-                        loadFragment(new RekomendasiRestoFragment());
-                        currentFragment = RESTAURANT;
+                        if(myChoice.getJumPorsi() != 0) {
+                            loadFragment(new RekomendasiRestoFragment());
+                            currentFragment = RESTAURANT;
+                        }else{
+                            Intent intent = new Intent(RekomendasiActivity.this, MapActivity2.class);
+                            intent.putExtra("myChoice", myChoice);
+                            intent.putExtra("budget", String.valueOf(tvMyBudget));
+                            intent.putExtra("progressBar", String.valueOf(pbBudget));
+                            intent.putExtra("totalbudget", String.valueOf(myChoice.getBudget()));
+                            startActivity(intent);
+                            finish();
+                        }
                     }
                 }else{
                     String id_menu = sharedPreferences.getString("id_menu", "");
@@ -123,6 +117,7 @@ public class RekomendasiActivity extends AppCompatActivity {
                         intent.putExtra("myChoice", myChoice);
                         intent.putExtra("budget", String.valueOf(tvMyBudget));
                         intent.putExtra("progressBar", String.valueOf(pbBudget));
+                        intent.putExtra("totalbudget", String.valueOf(myChoice.getBudget()));
                         startActivity(intent);
                         finish();
                     }
@@ -130,7 +125,16 @@ public class RekomendasiActivity extends AppCompatActivity {
             }
         });
 
-        loadFragment(new RekomendasiTravelFragment());
+        if(myChoice.getCategoryWisata().size() != 0) {
+            currentFragment = TRAVEL;
+            loadFragment(new RekomendasiTravelFragment());
+        }else if(myChoice.getJumDay() != 0 && myChoice.getJumKamar() != 0){
+            currentFragment = HOTEL;
+            loadFragment(new RekomendasiHotelFragment());
+        }else if(myChoice.getJumPorsi() != 0){
+            currentFragment = RESTAURANT;
+            loadFragment(new RekomendasiRestoFragment());
+        }
     }
 
     private void loadFragment(Fragment fragment) {

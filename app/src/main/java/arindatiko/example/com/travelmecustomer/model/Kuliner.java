@@ -20,12 +20,15 @@ public class Kuliner {
     private String jam_tutup;
     private String akses;
     private Double harga_atas;
+    private String last_update;
     private List<Menu> menu;
+
+    private Double totalHarga;
 
     public Kuliner() {
     }
 
-    public Kuliner(int id_kuliner, int id_admin, String nama, String alamat, String no_telp, Double posisi_lat, Double posisi_lng, Double harga_tiket_parkir_motor, Double harga_tiket_parkir_mobil, Double harga_tiket_parkir_bus, String foto, String deskripsi, String fasilitas, String jam_buka, String jam_tutup, String akses, Double harga_atas) {
+    public Kuliner(int id_kuliner, int id_admin, String nama, String alamat, String no_telp, Double posisi_lat, Double posisi_lng, Double harga_tiket_parkir_motor, Double harga_tiket_parkir_mobil, Double harga_tiket_parkir_bus, String foto, String deskripsi, String fasilitas, String jam_buka, String jam_tutup, String akses, Double harga_atas, String last_update) {
         this.id_kuliner = id_kuliner;
         this.id_admin = id_admin;
         this.nama = nama;
@@ -43,6 +46,29 @@ public class Kuliner {
         this.jam_tutup = jam_tutup;
         this.akses = akses;
         this.harga_atas = harga_atas;
+        this.last_update = last_update;
+    }
+
+    public Kuliner(String nama, String alamat, String fasilitas) {
+        this.nama = nama;
+        this.alamat = alamat;
+        this.fasilitas = fasilitas;
+    }
+
+    public String getLast_update() {
+        return last_update;
+    }
+
+    public void setLast_update(String last_update) {
+        this.last_update = last_update;
+    }
+
+    public Double getTotalHarga() {
+        return totalHarga;
+    }
+
+    public void setTotalHarga(Double totalHarga) {
+        this.totalHarga = totalHarga;
     }
 
     public List<Menu> getMenu() {

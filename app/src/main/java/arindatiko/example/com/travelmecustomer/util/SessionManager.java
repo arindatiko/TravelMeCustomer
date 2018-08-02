@@ -23,9 +23,11 @@ public class SessionManager {
     private static final String KEY_IS_USERNAME = "username";
     private static final String KEY_IS_NAMALENGKAP = "namalengkap";
     private static final String KEY_IS_NOTELP = "notelp";
+    private static final String KEY_IS_PASSWORD = "password";
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_IS_CURRENT_LOC= "current_loc";
     private static final String KEY_IS_LOCATION_NAME= "location_name";
+    private static final String KEY_IS_ORDER= "order_status";
     //private static final String KEY_IS_checkinID= "checkin_id";
     private static final String KEY_IS_LASTLOGIN= "lastlogin";
     private static final String KEY_IS_SESSION_TIMEOUT= "timeout";
@@ -90,6 +92,24 @@ public class SessionManager {
     public void setNoTelp(String noTelp){
         editor.putString(KEY_IS_NOTELP, noTelp);
         editor.commit();
+    }
+
+    public void setPassword(String password){
+        editor.putString(KEY_IS_PASSWORD, password);
+        editor.commit();
+    }
+
+    public void setStatus(int status){
+        editor.putInt(KEY_IS_ORDER, status);
+        editor.commit();
+    }
+
+    public int getStatus(){
+        return pref.getInt(KEY_IS_ORDER, 0);
+    }
+
+    public String getPassword(){
+        return pref.getString(KEY_IS_PASSWORD, null);
     }
 
     public String getNamaLengkap(){

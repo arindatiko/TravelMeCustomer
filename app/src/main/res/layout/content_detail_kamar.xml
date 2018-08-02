@@ -20,6 +20,17 @@
             android:paddingLeft="16dp">
 
             <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Update: "
+                android:textStyle="italic"
+                android:layout_gravity="right"
+                android:textSize="15sp"
+                android:textColor="@color/colorBlackLa"
+                android:fontFamily="@font/segoe"/>
+
+            <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

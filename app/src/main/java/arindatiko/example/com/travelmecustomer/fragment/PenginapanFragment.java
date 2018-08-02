@@ -27,7 +27,7 @@ import arindatiko.example.com.travelmecustomer.model.Penginapan;
 
 public class PenginapanFragment extends Fragment {
 
-    private TextView tvTitle, tvAddress, tvDescription, tvPhone, tvFacilities;
+    private TextView tvTitle, tvAddress, tvDescription, tvPhone, tvFacilities, tvDate;
     private GoogleMap map;
     private SupportMapFragment mapFragment;
     private Penginapan penginapan;
@@ -50,6 +50,7 @@ public class PenginapanFragment extends Fragment {
         tvDescription = (TextView) view.findViewById(R.id.tv_description);
         tvFacilities = (TextView) view.findViewById(R.id.tv_facilities);
         tvPhone = (TextView) view.findViewById(R.id.tv_phone);
+        tvDate = (TextView) view.findViewById(R.id.tv_date);
 
         penginapan = ((DetailPenginapanActivity) getActivity()).getPenginapan();
 
@@ -73,6 +74,7 @@ public class PenginapanFragment extends Fragment {
         tvDescription.setText(penginapan.getDeskripsi());
         tvFacilities.setText(penginapan.getFasilitas());
         tvPhone.setText(penginapan.getNo_telp());
+        tvDate.setText("Last Update: "+penginapan.getLast_update());
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override

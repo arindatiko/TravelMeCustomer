@@ -18,6 +18,7 @@ public class MyChoice implements Parcelable {
     public MyChoice() {
     }
 
+    //lengkap
     public MyChoice(Double budget, List<String> categoryWisata, int ticketMotor, int ticketCar, int ticketBus, int ticketAdult, int ticketChild, int jumPorsi, int jumKamar, int jumDay) {
         this.budget = budget;
         this.categoryWisata = categoryWisata;
@@ -27,6 +28,63 @@ public class MyChoice implements Parcelable {
         this.ticketAdult = ticketAdult;
         this.ticketChild = ticketChild;
         this.jumPorsi = jumPorsi;
+        this.jumKamar = jumKamar;
+        this.jumDay = jumDay;
+    }
+
+    //wisata kosong
+    public MyChoice(Double budget, int jumPorsi, int jumKamar, int jumDay) {
+        this.budget = budget;
+        this.jumPorsi = jumPorsi;
+        this.jumKamar = jumKamar;
+        this.jumDay = jumDay;
+    }
+
+    //porsi kosong
+    public MyChoice(Double budget, List<String> categoryWisata, int ticketMotor, int ticketCar, int ticketBus, int ticketAdult, int ticketChild, int jumKamar, int jumDay) {
+        this.budget = budget;
+        this.categoryWisata = categoryWisata;
+        this.ticketMotor = ticketMotor;
+        this.ticketCar = ticketCar;
+        this.ticketBus = ticketBus;
+        this.ticketAdult = ticketAdult;
+        this.ticketChild = ticketChild;
+        this.jumKamar = jumKamar;
+        this.jumDay = jumDay;
+    }
+
+    //hotel kosong
+    public MyChoice(Double budget, List<String> categoryWisata, int ticketMotor, int ticketCar, int ticketBus, int ticketAdult, int ticketChild, int jumPorsi) {
+        this.budget = budget;
+        this.categoryWisata = categoryWisata;
+        this.ticketMotor = ticketMotor;
+        this.ticketCar = ticketCar;
+        this.ticketBus = ticketBus;
+        this.ticketAdult = ticketAdult;
+        this.ticketChild = ticketChild;
+        this.jumPorsi = jumPorsi;
+    }
+
+    //hotel dan resto kosong
+    public MyChoice(Double budget, List<String> categoryWisata, int ticketMotor, int ticketCar, int ticketBus, int ticketAdult, int ticketChild) {
+        this.budget = budget;
+        this.categoryWisata = categoryWisata;
+        this.ticketMotor = ticketMotor;
+        this.ticketCar = ticketCar;
+        this.ticketBus = ticketBus;
+        this.ticketAdult = ticketAdult;
+        this.ticketChild = ticketChild;
+    }
+
+    //hotel dan wisata kosong
+    public MyChoice(Double budget, int jumPorsi) {
+        this.budget = budget;
+        this.jumPorsi = jumPorsi;
+    }
+
+    //resto dan wisata kosong
+    public MyChoice(Double budget, int jumKamar, int jumDay) {
+        this.budget = budget;
         this.jumKamar = jumKamar;
         this.jumDay = jumDay;
     }

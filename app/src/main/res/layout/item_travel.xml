@@ -36,17 +36,30 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="28dp">
 
-                <TextView
-                    android:id="@+id/tv_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="19.00 wib - 20.00 wib"
-                    android:textSize="10sp"
-                    android:textColor="@color/colorBlackLc"
-                    android:maxLines="1"
-                    android:fontFamily="@font/segoe"
-                    android:layout_gravity="right"/>
-
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_update"
+                        android:layout_width="260dp"
+                        android:layout_height="wrap_content"
+                        android:text="24 Juli 2018"
+                        android:textSize="10sp"
+                        android:textColor="@color/colorBlackLc"
+                        android:maxLines="1"
+                        android:fontFamily="@font/segoe"
+                        android:layout_gravity="left"/>
+                    <TextView
+                        android:id="@+id/tv_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="19.00 wib - 20.00 wib"
+                        android:textSize="10sp"
+                        android:textColor="@color/colorBlackLc"
+                        android:maxLines="1"
+                        android:fontFamily="@font/segoe"
+                        android:layout_toEndOf="@+id/tv_update" />
+                </RelativeLayout>
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
@@ -102,6 +115,42 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/ln_selesai"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="17dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:elevation="2dp"
+                android:orientation="horizontal"
+                android:background="@drawable/ic_reg_white">
+
+                <ImageView
+                    android:id="@+id/check"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_check"
+                    android:tint="@color/colorBlackLb"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:id="@+id/tv_sudah"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sudah Dikunjungi"
+                    android:textSize="10sp"
+                    android:textColor="@color/colorBlackLb"
+                    android:fontFamily="@font/segoe"/>
+
+            </LinearLayout>
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
@@ -149,14 +198,16 @@
                 android:tint="@color/colorBlackLd"
                 android:layout_marginLeft="12dp"/>
 
-            <ImageView
+
+
+            <!--<ImageView
                 android:id="@+id/img_hide"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_unchecked"
                 android:tint="@color/colorBlackLd"
                 android:layout_marginLeft="12dp"
-                android:visibility="gone"/>
+                android:visibility="gone"/>-->
             <!--<ImageView
                 android:id="@+id/img_show"
                 android:layout_width="wrap_content"

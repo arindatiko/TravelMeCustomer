@@ -54,6 +54,14 @@
           }
         },
         {
+          "client_id": "745118097700-t1nfaev2316vkqsdipedd82ka7dpim1d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "arindatiko.example.com.travelmecustomer",
+            "certificate_hash": "667d999338028864cd1e8688c505aa7a00136e0f"
+          }
+        },
+        {
           "client_id": "745118097700-ouv5qqjnbnauj762klgj1sk3jdlrje9h.apps.googleusercontent.com",
           "client_type": 3
         }

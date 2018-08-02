@@ -16,21 +16,37 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.API;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Kamar;
+import arindatiko.example.com.travelmecustomer.model.MyChoice;
+import arindatiko.example.com.travelmecustomer.model.Rekomendasi;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
 
 public class MyTravelKamarAdapter extends RecyclerView.Adapter<MyTravelKamarAdapter.MyViewHolder> {
     private Context context;
-    private List<Kamar> hotels;
+    private ArrayList<Kamar> hotels = new ArrayList<>();
+    private ArrayList<Rekomendasi> rekomendasis = new ArrayList<>();
 
-    public MyTravelKamarAdapter(Context context, List<Kamar> hotels) {
+    /*public MyTravelKamarAdapter(Context context, ArrayList<Kamar> hotels) {
         this.context = context;
         this.hotels = hotels;
+    }*/
+
+    public MyTravelKamarAdapter(Context context, ArrayList<Rekomendasi> rekomendasis) {
+        this.context = context;
+        this.rekomendasis = rekomendasis;
+        for (int i = 0; i < rekomendasis.size(); i++) {
+            hotels.add(rekomendasis.get(i).getKamar().get(0));
+        }
     }
 
     @Override
@@ -41,21 +57,39 @@ public class MyTravelKamarAdapter extends RecyclerView.Adapter<MyTravelKamarAdap
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final Kamar wisata = hotels.get(position);
+        final Kamar kamar = hotels.get(position);
 
-        holder.tvTitle.setText(wisata.getNama());
+        holder.tvTitle.setText(kamar.getNama());
         holder.tvTime.setVisibility(View.GONE);
         holder.imgCall.setVisibility(View.GONE);
         holder.lnHarga.setVisibility(View.GONE);
 
+        API.service_post.get_rekomendasi_2(rekomendasis.get(position).getId_rekomendasi(),
+                "kamar",
+                rekomendasis.get(position).getKamar().get(0).getId_kamar()).enqueue(new Callback<Rekomendasi>() {
+            @Override
+            public void onResponse(Call<Rekomendasi> call, Response<Rekomendasi> response) {
+                Rekomendasi r = response.body();
+                if(r.getFlag() == 1){
+                    holder.lnSelesai.setVisibility(View.VISIBLE);
+                }else{
+                    holder.lnSelesai.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Rekomendasi> call, Throwable t) {
+
+            }
+        });
 
         Glide.with(context)
-                .load(wisata.getFoto())
+                .load(kamar.getFoto())
                 .into(holder.imgItem);
 
         Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
         try {
-            List<Address> addresses = geocoder.getFromLocation(wisata.getPenginapan().getPosisi_lat(), wisata.getPenginapan().getPosisi_lng(), 1);
+            List<Address> addresses = geocoder.getFromLocation(kamar.getPenginapan().getPosisi_lat(), kamar.getPenginapan().getPosisi_lng(), 1);
 
             if (addresses.size() > 0) {
                 Address fetchedAddress = addresses.get(0);
@@ -79,9 +113,10 @@ public class MyTravelKamarAdapter extends RecyclerView.Adapter<MyTravelKamarAdap
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         private CardView cardItem;
-        private ImageView imgItem, imgCall, imgCheck;
-        private TextView tvTitle, tvAddress, tvPrice, tvDetailPrice, tvTime;
-        private LinearLayout lnItem, lnHarga;
+        private ImageView imgItem, imgCall, imgCheck, imgSelesai;
+        private TextView tvTitle, tvAddress, tvPrice, tvDetailPrice, tvTime, tvSelesai;
+        private LinearLayout lnItem, lnHarga, lnSelesai;
+
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -91,12 +126,15 @@ public class MyTravelKamarAdapter extends RecyclerView.Adapter<MyTravelKamarAdap
             imgItem = (ImageView) itemView.findViewById(R.id.img_item);
             imgCall = (ImageView) itemView.findViewById(R.id.img_call);
             imgCheck = (ImageView) itemView.findViewById(R.id.img_check);
+            imgSelesai = (ImageView) itemView.findViewById(R.id.check);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
             tvAddress = (TextView) itemView.findViewById(R.id.tv_address);
             tvPrice = (TextView) itemView.findViewById(R.id.tv_price);
             tvDetailPrice = (TextView) itemView.findViewById(R.id.tv_detail_price);
+            tvSelesai = (TextView) itemView.findViewById(R.id.tv_done);
             tvTime = (TextView) itemView.findViewById(R.id.tv_time);
             lnItem = (LinearLayout) itemView.findViewById(R.id.ln_item);
+            lnSelesai = (LinearLayout) itemView.findViewById(R.id.ln_selesai);
         }
     }
 }

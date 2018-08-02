@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.MyTravelFragment">
+    tools:context=".HistoryActivity">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="TravelMe"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlackLa"
+                android:fontFamily="@font/lobster"/>
+
+        </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:fontFamily="@font/segoe"
+        android:text="Tidak Ada Pesanan"
+        android:id="@+id/tv_none"
+        android:visibility="gone"
+        android:textColor="@color/colorBlackLa" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:fontFamily="@font/segoe"
-                android:text="Tidak Ada Pesanan"
-                android:id="@+id/tv_none"
-                android:visibility="gone"
-                android:textColor="@color/colorBlackLa" />
+            android:layout_height="match_parent"
+            android:id="@+id/ln_mytravel">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/ln_mytravel">
+                android:orientation="vertical">
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,7 +89,7 @@
                                 android:id="@+id/tv_Name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Arinda Restu Nandatiko"
+                                android:text="Nama Driver"
                                 android:textColor="@color/colorBlackLa"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -84,7 +106,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="3dp"
-                                android:text="11"
+                                android:text="29478383209"
                                 android:textSize="16sp" />
 
                         </LinearLayout>
@@ -130,7 +152,7 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:fontFamily="@font/segoe"
-                            android:text="Rp 1083000.0"
+                            android:text="Rp 5000"
                             android:textSize="18sp" />
 
                     </LinearLayout>
@@ -167,7 +189,7 @@
                             android:layout_marginBottom="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginLeft="16dp"
-                            android:text="Rp 250000.0"
+                            android:text="Rp 5000"
                             android:textSize="18sp"
                             android:fontFamily="@font/segoe"/>
 
@@ -234,4 +256,4 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-</FrameLayout>
+</RelativeLayout>

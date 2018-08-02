@@ -12,6 +12,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,13 +28,20 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import arindatiko.example.com.travelmecustomer.API;
 import arindatiko.example.com.travelmecustomer.DetailKamarActivity;
 import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
+import arindatiko.example.com.travelmecustomer.model.Wisata;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static arindatiko.example.com.travelmecustomer.DetailKamarActivity.KAMAR_ID;
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
@@ -43,6 +52,16 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
     private MyChoice myChoice;
     private TextView tvMyBudget;
     private ProgressBar pbBudget;
+    private int new_kamar = 0;
+
+    public void replaceData(List<Kamar> data) {
+        this.hotels = data;
+
+        for (int i = 0; i < hotels.size(); i++) {
+            Double totalHarga = hotels.get(i).getHarga() * myChoice.getJumKamar() * myChoice.getJumDay();
+            hotels.get(i).setTotalHarga(totalHarga);
+        }
+    }
 
     public RekomendasiHotelAdapter(Context context, List<Kamar> hotels, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
@@ -61,12 +80,12 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Kamar kamar = hotels.get(position);
-        final Double totalHarga = kamar.getHarga() * myChoice.getJumKamar() * myChoice.getJumDay();
+        //Double totalHarga = kamar.getHarga() * myChoice.getJumKamar() * myChoice.getJumDay();
 
         holder.tvTitle.setText(kamar.getNama());
         holder.tvResto.setVisibility(View.VISIBLE);
         holder.tvResto.setText(kamar.getPenginapan().getNama());
-        holder.tvPrice.setText("Rp "+totalHarga);
+        holder.tvPrice.setText("Rp "+kamar.getTotalHarga());
         holder.tvDetailPrice.setText("Jumlah kamar : "+ myChoice.getJumKamar() +"\nJumlah hari : "+ myChoice.getJumDay() +"\nHarga kamar : "+ kamar.getHarga());
         holder.tvTime.setVisibility(View.GONE);
 
@@ -88,8 +107,10 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
 
 
                 if(sharedPreferences.getString("id_kamar","").contains(","+String.valueOf(kamar.getId_kamar()))){
-                    holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
-                    myChoice.setBudget(myChoice.getBudget()+totalHarga);
+                    ColorStateList cs = AppCompatResources.getColorStateList(context, R.color.colorBlackLd);
+                    ImageViewCompat.setImageTintList(holder.imgCheck, cs);
+                    //holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
+                    myChoice.setBudget(myChoice.getBudget()+kamar.getTotalHarga());
 
                     //tampung total
                     //myChoice.setTotalBiaya(myChoice.getTotalBiaya()+totalHarga);
@@ -100,14 +121,33 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
                     editor.commit();
                 }
                 else {
-                    if (totalHarga>myChoice.getBudget()){
+                    if (kamar.getTotalHarga()>myChoice.getBudget()){
                         Toast.makeText(context, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
 
-                        myChoice.setBudget(myChoice.getBudget()-totalHarga);
+                        myChoice.setBudget(myChoice.getBudget()-kamar.getTotalHarga());
+                        new_kamar = kamar.getBanyak_kamar() - myChoice.getJumKamar();
 
+                        API.service_post.update_kamar(kamar.getId_kamar(),
+                                kamar.getId_penginapan(),
+                                kamar.getNama(),
+                                new_kamar,
+                                kamar.getKapasitas(),
+                                kamar.getFasilitas(),
+                                kamar.getHarga(),
+                                kamar.getFoto()).enqueue(new Callback<Kamar>() {
+                            @Override
+                            public void onResponse(Call<Kamar> call, Response<Kamar> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<Kamar> call, Throwable t) {
+
+                            }
+                        });
                         String add_kamar = sharedPreferences.getString("id_kamar","")+","+kamar.getId_kamar();
                         editor.putString("id_kamar", String.valueOf(add_kamar));
                         editor.commit();
@@ -159,6 +199,16 @@ public class RekomendasiHotelAdapter extends RecyclerView.Adapter<RekomendasiHot
         return hotels.size();
     }
 
+    public void updateWisataList(List<Kamar> hotels){
+        Collections.sort(hotels, new Comparator<Kamar>() {
+            @Override
+            public int compare(Kamar o1, Kamar o2) {
+                return (int) (o1.getTotalHarga() - o2.getTotalHarga());
+
+            }
+        });
+        this.notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 

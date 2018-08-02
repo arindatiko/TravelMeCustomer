@@ -1,12 +1,8 @@
 package arindatiko.example.com.travelmecustomer.model;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.stream.Stream;
 
-public class Wisata {
+public class WisataTujuan extends ArrayList{
     private int  id_wisata;
     private int id_user;
     private String nama;
@@ -27,14 +23,11 @@ public class Wisata {
     private String jam_buka;
     private String jam_tutup;
     private String jenis;
-    private String last_update;
 
-    private Double totalHarga;
-
-    public Wisata() {
+    public WisataTujuan() {
     }
 
-    public Wisata(int id_wisata, int id_user, String nama, String desa, String kecamatan, Double tiket_masuk_dewasa, Double tiket_masuk_anak, Double biaya_parkir_motor, Double biaya_parkir_mobil, Double biaya_parkir_bus, String foto, String deskripsi, String fasilitas, Double posisi_lat, Double posisi_lng, String akses, String zona, String jam_buka, String jam_tutup, String jenis, String last_update) {
+    public WisataTujuan(int id_wisata, int id_user, String nama, String desa, String kecamatan, Double tiket_masuk_dewasa, Double tiket_masuk_anak, Double biaya_parkir_motor, Double biaya_parkir_mobil, Double biaya_parkir_bus, String foto, String deskripsi, String fasilitas, Double posisi_lat, Double posisi_lng, String akses, String zona, String jam_buka, String jam_tutup, String jenis) {
         this.id_wisata = id_wisata;
         this.id_user = id_user;
         this.nama = nama;
@@ -55,29 +48,6 @@ public class Wisata {
         this.jam_buka = jam_buka;
         this.jam_tutup = jam_tutup;
         this.jenis = jenis;
-        this.last_update = last_update;
-    }
-
-    public Wisata(String nama, String desa, String kecamatan) {
-        this.nama = nama;
-        this.desa = desa;
-        this.kecamatan = kecamatan;
-    }
-
-    public String getLast_update() {
-        return last_update;
-    }
-
-    public void setLast_update(String last_update) {
-        this.last_update = last_update;
-    }
-
-    public Double getTotalHarga() {
-        return totalHarga;
-    }
-
-    public void setTotalHarga(Double totalHarga) {
-        this.totalHarga = totalHarga;
     }
 
     public int getId_wisata() {
@@ -238,12 +208,5 @@ public class Wisata {
 
     public void setJenis(String jenis) {
         this.jenis = jenis;
-    }
-}
-
-class WisataSortByName implements Comparator<Wisata> {
-    @Override
-    public int compare(Wisata o1, Wisata o2) {
-        return o1.getNama().compareTo(o2.getNama());
     }
 }

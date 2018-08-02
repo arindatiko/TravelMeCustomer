@@ -8,6 +8,7 @@ public class Tujuan {
     private String id_user;
     private String id_tujuan;
     private String jenis_layanan;
+    private String id_rekomendasi;
     private int flag;
 
     private ArrayList<Wisata> wisata;
@@ -15,6 +16,14 @@ public class Tujuan {
     private ArrayList<Penginapan> penginapan;
     private ArrayList<Kamar> kamar;
     private ArrayList<Menu> menu;
+
+    public String getId_rekomendasi() {
+        return id_rekomendasi;
+    }
+
+    public void setId_rekomendasi(String id_rekomendasi) {
+        this.id_rekomendasi = id_rekomendasi;
+    }
 
     public String getId_user() {
         return id_user;

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "arindatiko.example.com.travelmecustomer"
-        minSdkVersion 21
+        minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled true
+    }
+
 }
 
 dependencies {
@@ -38,10 +42,10 @@ dependencies {
 
     //timeline view
     //implementation 'com.github.vipulasri:timelineview:1.0.6'
-    implementation 'com.github.sangcomz:StickyTimeLine:v0.0.17'
+    //implementation 'com.github.sangcomz:StickyTimeLine:v0.0.17'
 
     //calendar
-    implementation 'com.archit.calendar:awesome-calendar:1.1.0'
+    //implementation 'com.archit.calendar:awesome-calendar:1.1.0'
 
     //bottom navigation
     implementation 'com.aurelhubert:ahbottomnavigation:2.1.0'
@@ -71,6 +75,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:12.0.0'
     implementation 'com.google.firebase:firebase-database:12.0.0'
     implementation 'com.firebase:geofire-android:2.1.1'
+    implementation 'com.google.firebase:firebase-auth:12.0.0'
 
     testImplementation 'junit:junit:4.12'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'

@@ -81,11 +81,32 @@
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".LoginActivityBackup"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".MapActivity"
             android:label="@string/title_activity_map" />
         <activity
             android:name=".MapActivity2"
             android:label="@string/title_activity_map2" />
+        <activity
+            android:name=".TentangActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".EditProfilActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".HistoryActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

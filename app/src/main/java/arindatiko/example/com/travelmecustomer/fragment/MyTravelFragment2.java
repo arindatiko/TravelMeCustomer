@@ -21,6 +21,7 @@ import arindatiko.example.com.travelmecustomer.model.Kamar;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.Pesanan;
 import arindatiko.example.com.travelmecustomer.model.Wisata;
+import butterknife.ButterKnife;
 
 public class MyTravelFragment2 extends Fragment {
 
@@ -38,6 +39,7 @@ public class MyTravelFragment2 extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_my_travel_fragment2, container, false);
+
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("myTravel", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

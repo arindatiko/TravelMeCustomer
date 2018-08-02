@@ -54,23 +54,7 @@ public class MyTravelAdapter extends RecyclerView.Adapter<MyTravelAdapter.MyView
 
         final Pesanan pesanan = pesanans.get(position);
 
-        if(pesanan.getStatus_selesai() == 0){
-            holder.cardItem.setVisibility(View.VISIBLE);
-            holder.tvTitle.setText("Trip On Going");
-            holder.tvTotalBudget.setText(myChoice.getTotalBiaya().toString());
-            holder.tvTimestamp.setText(pesanan.getWaktu_pesan());
 
-            holder.cardItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(context, MapActivity.class);
-                    i.putExtra("pesanan", pesanan.getId_pesanan());
-                    context.startActivity(i);
-                }
-            });
-        }else{
-            holder.cardStatus.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override

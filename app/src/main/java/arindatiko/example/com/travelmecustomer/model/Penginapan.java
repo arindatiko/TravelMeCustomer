@@ -14,13 +14,14 @@ public class Penginapan {
     private String deskripsi;
     private String fasilitas;
     private String akses;
+    private String last_update;
     private List<Kamar> kamar;
 
     public Penginapan() {
     }
 
     public Penginapan(int id_penginapan, int id_admin, String nama, String alamat, String no_telp, Double posisi_lat,
-                      Double posisi_lng, String foto, String deskripsi, String fasilitas, String akses) {
+                      Double posisi_lng, String foto, String deskripsi, String fasilitas, String akses, String last_update) {
         this.id_penginapan = id_penginapan;
         this.id_admin = id_admin;
         this.nama = nama;
@@ -32,6 +33,15 @@ public class Penginapan {
         this.deskripsi = deskripsi;
         this.fasilitas = fasilitas;
         this.akses = akses;
+        this.last_update = last_update;
+    }
+
+    public String getLast_update() {
+        return last_update;
+    }
+
+    public void setLast_update(String last_update) {
+        this.last_update = last_update;
     }
 
     public List<Kamar> getKamar() {

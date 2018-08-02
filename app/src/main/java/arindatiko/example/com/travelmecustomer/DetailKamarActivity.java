@@ -30,7 +30,7 @@ public class DetailKamarActivity extends AppCompatActivity {
     private Penginapan penginapan;
 
     private ImageView imgDetail;
-    private TextView tvTitle, tvAddress, tvPrice, tvFacilities, tvRooms, tvCapacity, tvHotel;
+    private TextView tvTitle, tvAddress, tvPrice, tvFacilities, tvRooms, tvCapacity, tvHotel, tvDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,7 @@ public class DetailKamarActivity extends AppCompatActivity {
         tvCapacity = (TextView) findViewById(R.id.tv_capacity);
         tvPrice = (TextView) findViewById(R.id.tv_price);
         tvFacilities = (TextView) findViewById(R.id.tv_facilities);
+        tvDate = (TextView) findViewById(R.id.tv_date);
 
         loadKamarData();
     }
@@ -119,5 +120,6 @@ public class DetailKamarActivity extends AppCompatActivity {
         tvCapacity.setText(String.valueOf(kamar.getKapasitas()));
         tvPrice.setText(String.valueOf(kamar.getHarga()));
         tvFacilities.setText(kamar.getFasilitas());
+        tvDate.setText("Last Update: "+kamar.getLast_update());
     }
 }

@@ -29,6 +29,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,6 +39,7 @@ import arindatiko.example.com.travelmecustomer.R;
 import arindatiko.example.com.travelmecustomer.model.Kuliner;
 import arindatiko.example.com.travelmecustomer.model.Menu;
 import arindatiko.example.com.travelmecustomer.model.MyChoice;
+import arindatiko.example.com.travelmecustomer.model.Wisata;
 
 import static arindatiko.example.com.travelmecustomer.DetailKulinerActivity.KULINER_ID;
 import static arindatiko.example.com.travelmecustomer.fragment.HomeFragment.HOME_FRAG_TAG;
@@ -53,17 +56,15 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
-    //private int jumPorsi = 0;
-    private Double totalHarga = 0.0;
-    private boolean click = false;
+    public void replaceData(List<Kuliner> data) {
+        this.kuliners = data;
 
-    /*public RekomendasiRestoAdapter(Context context, List<Menu> menus, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
-        this.context = context;
-        this.menus = menus;
-        this.myChoice = myChoice;
-        this.tvMyBudget = tvMyBudget;
-        this.pbBudget = pbBudget;
-    }*/
+        for (int i = 0; i < kuliners.size(); i++) {
+            Double totalHarga = kuliners.get(i).getHarga_atas() * myChoice.getJumPorsi();
+
+            kuliners.get(i).setTotalHarga(totalHarga);
+        }
+    }
 
     public RekomendasiRestoAdapter(Context context, List<Kuliner> kuliners, MyChoice myChoice, TextView tvMyBudget, ProgressBar pbBudget) {
         this.context = context;
@@ -81,27 +82,15 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-
-        //final Menu menu = menus.get(position);
         final Kuliner kuliner = kuliners.get(position);
-        final Double totalHarga = kuliner.getHarga_atas() * myChoice.getJumPorsi();
 
         sharedPreferences = ((Activity)context).getSharedPreferences("myTravel",Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        /*holder.tvTitle.setText(menu.getNama());
-        holder.tvResto.setVisibility(View.VISIBLE);
-        holder.tvResto.setText(menu.getKuliner().getNama());
-        holder.tvDetailPrice.setText("Harga per porsi : Rp "+menu.getHarga());
-        holder.tvTime.setText(menu.getKuliner().getJam_buka() +" wib - "+ menu.getKuliner().getJam_tutup() +" wib");*/
-
         holder.tvTitle.setText(kuliner.getNama());
-        //holder.tvResto.setText(menu.getKuliner().getNama());
+        holder.tvPrice.setText("Rp "+kuliner.getTotalHarga());
         holder.tvDetailPrice.setText("Harga tertinggi per porsi : Rp "+kuliner.getHarga_atas());
         holder.tvTime.setText(kuliner.getJam_buka() +" wib - "+ kuliner.getJam_tutup() +" wib");
-
-//        holder.imgDrink.setImageResource(menu.getDrinks().get(0).getImage());
-//        holder.imgFood.setImageResource(menu.getFoods().get(0).getImage());
 
         holder.cardItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,34 +100,6 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                 context.startActivity(intent);
             }
         });
-
-       /* holder.imgCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                holder.ln_porsi.setVisibility(View.VISIBLE);
-//                holder.imgHide.setVisibility(View.VISIBLE);
-
-                if(sharedPreferences.getString("id_menu","").contains(","+String.valueOf(menu.getId_menu()))){
-                    holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
-
-                    String add_menu = sharedPreferences.getString("id_menu","");
-                    add_menu = add_menu.replace(","+String.valueOf(menu.getId_menu()),"");
-                    editor.putString("id_menu", String.valueOf(add_menu));
-                    editor.commit();
-                }
-                else {
-                    holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
-
-                    String add_menu = sharedPreferences.getString("id_menu", "") + "," + menu.getId_menu();
-                    editor.putString("id_menu", String.valueOf(add_menu));
-                    editor.commit();
-                }
-
-                Log.d("selectedMenu",sharedPreferences.getString("id_menu",""));
-                Log.d("budget", String.valueOf(myChoice.getBudget()));
-            }
-
-        });*/
 
         holder.imgCheck.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +111,7 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
 
                 if(sharedPreferences.getString("id_menu","").contains(","+String.valueOf(kuliner.getId_kuliner()))){
                     holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
-                    myChoice.setBudget(myChoice.getBudget()+totalHarga);
+                    myChoice.setBudget(myChoice.getBudget()+kuliner.getTotalHarga());
 
                     String add_menu = sharedPreferences.getString("id_menu","");
                     add_menu = add_menu.replace(","+String.valueOf(kuliner.getId_kuliner()),"");
@@ -158,14 +119,14 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                     editor.commit();
                 }
                 else {
-                    if (totalHarga>myChoice.getBudget()){
+                    if (kuliner.getTotalHarga()>myChoice.getBudget()){
                         Toast.makeText(context, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         holder.imgCheck.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
-                        holder.tvPrice.setText("Rp "+totalHarga);
+                        holder.tvPrice.setText("Rp "+kuliner.getTotalHarga());
 
-                        myChoice.setBudget(myChoice.getBudget()-totalHarga);
+                        myChoice.setBudget(myChoice.getBudget()-kuliner.getTotalHarga());
 
                         String add_menu = sharedPreferences.getString("id_menu","")+","+kuliner.getId_kuliner();
                         editor.putString("id_menu", String.valueOf(add_menu));
@@ -182,53 +143,6 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
                 Log.d("budget", String.valueOf(myChoice.getBudget()));
             }
         });
-
-
-        /*holder.rvDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                click = true;
-                if(click = true){
-                    if(holder.etJumPorsi.getText().toString().equals("")){
-                        jumPorsi = 0;
-                        myChoice.setBudget(myChoice.getBudget() + totalHarga);
-                    }else{
-                        jumPorsi = Integer.parseInt(holder.etJumPorsi.getText().toString());
-                    }
-
-                    totalHarga = menu.getHarga() * jumPorsi;
-
-                    holder.tvPrice.setText("Rp "+totalHarga);
-                    holder.tvJumPorsi.setVisibility(View.VISIBLE);
-                    holder.tvJumPorsi.setText("Jumlah porsi : " + jumPorsi);
-
-                    if (totalHarga<myChoice.getBudget()){
-                        myChoice.setBudget(myChoice.getBudget() - totalHarga);
-
-                        editor.putString("sisabudget", String.valueOf(myChoice.getBudget()));
-                        editor.commit();
-
-                        pbBudget.setProgress(myChoice.getBudget().intValue());
-                        tvMyBudget.setText("Rp "+ myChoice.getBudget());
-                    }else{
-                        Toast.makeText(context, "Budget anda tidak cukup", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-
-        holder.imgHide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(holder.imgHide.getVisibility() == View.VISIBLE){
-                    holder.imgHide.setImageTintList(ColorStateList.valueOf(Color.parseColor("#000000")));
-                    holder.ln_porsi.setVisibility(View.GONE);
-                }else{
-                    holder.imgHide.setImageTintList(ColorStateList.valueOf(Color.parseColor("#D5D5D5")));
-                    holder.ln_porsi.setVisibility(View.VISIBLE);
-                }
-            }
-        });*/
 
         holder.imgCall.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,6 +180,16 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
         return kuliners.size();
     }
 
+    public void updateWisataList(List<Kuliner> kuliners){
+        Collections.sort(kuliners, new Comparator<Kuliner>() {
+            @Override
+            public int compare(Kuliner o1, Kuliner o2) {
+                return (int) (o1.getTotalHarga() - o2.getTotalHarga());
+
+            }
+        });
+        this.notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -283,7 +207,6 @@ public class RekomendasiRestoAdapter extends RecyclerView.Adapter<RekomendasiRes
             imgItem = (ImageView) itemView.findViewById(R.id.img_item);
             imgCall = (ImageView) itemView.findViewById(R.id.img_call);
             imgCheck = (ImageView) itemView.findViewById(R.id.img_check);
-            imgHide = (ImageView) itemView.findViewById(R.id.img_hide);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_title);
             tvResto = (TextView) itemView.findViewById(R.id.tv_resto);
             tvAddress = (TextView) itemView.findViewById(R.id.tv_address);
